@@ -6,92 +6,158 @@
 * @date 2018-01-10
 */
 #include <stdio.h>
+#include <stdlib.h>
+#include <omp.h>
+#include <math.h>
 
-int main()
+int image_rgb_rotate_right(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fIn = fopen("lena512.bmp","r");					//Input File name
-	FILE *fOut = fopen("lena_rotate.bmp","w+");		    	//Output File name
-
-	int i,j,choice;
-	unsigned char byte[54],colorTable[1024];
-	
-	if(fIn==NULL)											// check if the input file has not been opened succesfully.
-	{											
-		printf("File does not exist.\n");
-	}
-
-	for(i=0;i<54;i++)										//read the 54 byte header from fIn
-	{									
-		byte[i] = getc(fIn);								
-	}
-
-	fwrite(byte,sizeof(unsigned char),54,fOut);				//write the header back
-
-	// extract image height, width and bitDepth from imageHeader 
-	int height = *(int*)&byte[18];
-	int width = *(int*)&byte[22];
-	int bitDepth = *(int*)&byte[28];
-
-	printf("width: %d\n",width);
-	printf("height: %d\n",height );
-
+	FILE *fOut = fopen("out/rotate_right.bmp","w+");		    	//Output File name
+	int i,j;
+	int tempH, tempW;
+	unsigned char heightA[4];
+	unsigned char widthA[4];
+	int bitDepth = *(int *)&header[28];
 	int size = height*width;								//calculate image size
+	unsigned char out_buffer[height][width][3];
 
-	if(bitDepth <= 8)										//if ColorTable present, extract it.
+	#pragma omp parallel for private(j, tempH) //num_threads(threads)
+	for (i = 0; i < width; i++) // to rotate right
 	{
-		fread(colorTable,sizeof(unsigned char),1024,fIn);
-		fwrite(colorTable,sizeof(unsigned char),1024,fOut);
+		tempH = height;
+		for (j = 0; j < height; j++)
+		{
+			tempH--;
+			out_buffer[tempH][i][2] = buffer[i][j][2];
+			out_buffer[tempH][i][1] = buffer[i][j][1];
+			out_buffer[tempH][i][0] = buffer[i][j][0];
+		}
 	}
 
-	unsigned char buffer[width][height];					//to store the image data
-	unsigned char out_buffer[width][height];
-
-	fread(buffer,sizeof(unsigned char),size,fIn);			//read the image data
-
-	printf("Enter your choice :\n");
-	printf("1. Rotate right\n");
-	printf("2. Rotate left\n");
-	printf("3. Rotate 180\n");
-
-	scanf("%d",&choice);
-
-	switch(choice)												//to rotate image in 3 direction
-	{												
-		case 1:
-			for(i=0;i<width;i++)								//to rotate right
-			{
-				for(j=0;j<height;j++)
-				{
-					out_buffer[j][height-1-i]=buffer[i][j];
-				}
-			}
-			break;
-		case 2:
-			for(i=0;i<width;i++)								//to rotate left
-			{
-				for(j=0;j<height;j++)
-				{
-					out_buffer[j][i]=buffer[i][j];
-				}
-			}
-			break;
-		case 3:
-			for(i=0;i<width;i++)								//to rotate 180 degree
-			{
-				for(j=0;j<height;j++)
-				{
-					out_buffer[width-i][j]=buffer[i][j];
-				}
-			}
-			break;
-		default:
-			break;
+	#pragma omp parallel for //num_threads(threads)
+	for (i=0;i<4;i++){
+		heightA[i]=header[18+i];
+		widthA[i]=header[22+i];
+		header[18 + i] = widthA[i];
+		header[22 + i] = heightA[i];
 	}
-	
-	fwrite(out_buffer,sizeof(unsigned char),size,fOut);		//write back to the output image
 
-	fclose(fIn);
+	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
+	if (bitDepth <= 8)								 // if ColorTable present, extract it.
+	{
+		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
+	}
+
+// #pragma omp parallel for num_threads(threads) private(j) ordered
+	for (i = 0; i < height; i++)
+	{
+		// #pragma omp ordered
+		for (j = 0; j < width; j++)
+		{
+			putc(out_buffer[i][j][2], fOut);
+			putc(out_buffer[i][j][1], fOut);
+			putc(out_buffer[i][j][0], fOut);
+		}
+	}
 	fclose(fOut);
-
 	return 0;
 }
+
+int image_rgb_rotate_left(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+{
+	FILE *fOut = fopen("out/rotate_left.bmp","w+");		    	//Output File name
+	int i,j,choice;
+	int tempH, tempW;
+	unsigned char heightA[4];
+	unsigned char widthA[4];
+	int bitDepth = *(int *)&header[28];
+	int size = height*width;								//calculate image size
+	unsigned char out_buffer[height][width][3];
+
+	#pragma omp parallel for private(j, tempH) //num_threads(threads)
+	for (i = 0; i < height; i++) // to rotate left
+	{
+		tempW = width;
+		for (j = 0; j < width; j++)
+		{
+			tempW--;
+			out_buffer[i][tempW][2] = buffer[j][i][2];
+			out_buffer[i][tempW][1] = buffer[j][i][1];
+			out_buffer[i][tempW][0] = buffer[j][i][0];
+		}
+	}
+
+	#pragma omp parallel for //num_threads(threads)
+	for (i = 0; i < 4; i++)
+	{
+		heightA[i] = header[18 + i];
+		widthA[i] = header[22 + i];
+		header[18 + i] = widthA[i];
+		header[22 + i] = heightA[i];
+	}
+	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
+	if (bitDepth <= 8)								 // if ColorTable present, extract it.
+	{
+		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
+	}
+
+	// #pragma omp parallel for num_threads(threads) private(j, tempH) ordered
+	for (i = 0; i < height; i++)
+	{
+		// #pragma omp ordered
+		for (j = 0; j < width; j++)
+		{
+			putc(out_buffer[i][j][2], fOut);
+			putc(out_buffer[i][j][1], fOut);
+			putc(out_buffer[i][j][0], fOut);
+		}
+	}
+	fclose(fOut);
+	return 0;
+}
+
+int image_rgb_rotate_180(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+{
+	FILE *fOut = fopen("out/rotate_180.bmp","w+");		    	//Output File name
+	int i,j,choice;
+	int tempH, tempW;
+	unsigned char heightA[4];
+	unsigned char widthA[4];
+
+	int bitDepth = *(int *)&header[28];
+
+	int size = height*width;								//calculate image size
+	unsigned char out_buffer[width][height][3];
+	
+	#pragma omp parallel for private(j, tempH) //num_threads(threads)
+	for (i = width-1; i >= 0; i--) // to rotate left
+	{
+		for (j = height-1; j >= 0; j--)
+		{
+			out_buffer[i][j][2] = buffer[width - 1 - i][j][2];
+			out_buffer[i][j][1] = buffer[width - 1 - i][j][1];
+			out_buffer[i][j][0] = buffer[width - 1 - i][j][0];
+		}
+	}
+
+	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
+	if (bitDepth <= 8)								 // if ColorTable present, extract it.
+	{
+		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
+	}
+
+	// #pragma omp parallel for num_threads(threads) private(j, tempH) ordered
+	for (i = 0; i < width; i++)
+	{
+	// #pragma omp ordered
+		for (j = 0; j < height; j++)
+		{
+			putc(out_buffer[i][j][2], fOut);
+			putc(out_buffer[i][j][1], fOut);
+			putc(out_buffer[i][j][0], fOut);
+		}
+	}
+	fclose(fOut);
+	return 0;
+}
+
