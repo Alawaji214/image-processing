@@ -21,7 +21,6 @@ int black_and_white(unsigned char header[54], int size, unsigned char buffer[siz
 		fwrite(colorTable,sizeof(unsigned char),1024,fOut);
 	}
 
-	#pragma omp parallel for num_threads(4) ordered
 	for(i=0;i<size;i++)									//store 0(black) and 255(white) values to buffer 
 		{								
 		if((buffer[i][0] > BW_THRESHOLD && buffer[i][1] > BW_THRESHOLD)||(buffer[i][0] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD)||(buffer[i][1] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD)){
@@ -29,7 +28,6 @@ int black_and_white(unsigned char header[54], int size, unsigned char buffer[siz
 		}else{
 		y= BLACK ;	
 		}
-		#pragma omp ordered
 			{
 			putc(y,fOut);
 			putc(y,fOut);

@@ -26,7 +26,6 @@ int image_bluring_gray(unsigned char header[54], int size , int height , int wid
 						{v,v,v},
 						{v,v,v}};
 	
-	#pragma omp parallel num_threads(1)
 		{
 
 		for(i=0;i<size;i++)

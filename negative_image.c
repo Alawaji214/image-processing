@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 
-int image_negative(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_negative(unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
 	FILE *fOut = fopen("out/negative_image.bmp", "w+"); // Output File name
 	int i,j; // loop counter variables
@@ -10,7 +10,6 @@ int image_negative(int threads, unsigned char header[54], int height, int width,
 	int bitDepth = *(int*)&header[28];
 
 	//Calculate the mean of the image
-	#pragma omp parallel for private(j) //num_threads(threads)
 	for(i = 0; i < width; i++){
 	      for(j = 0; j < height; j++){
 			  out_buffer[i][j][0] = 0xFF - buffer [i][j][0];
@@ -25,10 +24,8 @@ int image_negative(int threads, unsigned char header[54], int height, int width,
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-	// #pragma omp parallel for num_threads(threads) private(j) ordered
 	for (i = 0; i < width; i++)
 	{
-		// #pragma omp ordered
 		for (j = 0; j < height; j++)
 		{
 			putc(out_buffer[i][j][2], fOut);

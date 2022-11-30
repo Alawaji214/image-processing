@@ -24,7 +24,6 @@ int image_bluring_color(unsigned char header[54], int size , int height , int wi
 	float kernel[3][3]={{v,v,v},
 						{v,v,v},
 						{v,v,v}};
-	#pragma omp parallel for num_threads(1)
 	for(x=1;x<height-1;x++)
 	{					
 		for(y=1;y<width-1;y++)
@@ -47,7 +46,6 @@ int image_bluring_color(unsigned char header[54], int size , int height , int wi
 			out[(x)*width+(y)][2]=sum2;	
 		}
 	}
-	#pragma omp parallel for num_threads(1)
 	for(i=0;i<size;i++)						//write image data back to the file
 	{
 		putc(out[i][2],fOut);

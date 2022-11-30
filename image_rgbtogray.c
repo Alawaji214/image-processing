@@ -7,9 +7,8 @@
 */
 #include <stdio.h>
 #include <time.h>
-#include <omp.h>
 
-int image_rgbtogray(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgbtogray(unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
 	FILE *fOut = fopen("out/image_gray.bmp", "w+"); // Output File name
 	int i, j;
@@ -21,7 +20,6 @@ int image_rgbtogray(int threads, unsigned char header[54], int height, int width
 
 	double out_buffer[width][height];
 
-	#pragma omp parallel for private(j) //num_threads(threads)
 	for (i = 0; i < width; i++) // to rotate right
 	{
 		for (j = 0; j < height; j++)
@@ -36,10 +34,8 @@ int image_rgbtogray(int threads, unsigned char header[54], int height, int width
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-	// #pragma omp parallel for num_threads(threads) private(j) ordered
 	for (i = 0; i < width; i++)
 	{
-	// #pragma omp ordered
 		for (j = 0; j < height; j++)
 		{
 			putc(out_buffer[i][j], fOut);
