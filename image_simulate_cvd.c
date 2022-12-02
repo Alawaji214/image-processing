@@ -9,10 +9,13 @@
 #include <time.h>
 #include "color_blindess.c"
 
-int simulate_cvd_protanopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_simulate_protanopia.bmp","w+");		    	// Output File name
+int simulate_cvd_protanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+{
+	char ImageFilePath[100];
+	sprintf(ImageFilePath, "out/%s/nature_simulate_protanopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
-    if(fOut==NULL)							// check if the input file has not been opened succesfully.
+	if(fOut==NULL)							// check if the input file has not been opened succesfully.
 	{											
 		printf("File did not open.\n");
 	}
@@ -51,8 +54,11 @@ int simulate_cvd_protanopia(char * header, int size, unsigned char * buffer) {
 	fclose(fOut);
 	return 0;
 }
-int simulate_cvd_deuteranopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_simulate_deuteranopia.bmp","w+");		    	// Output File name
+int simulate_cvd_deuteranopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+{
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/cvd_deuteranopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	int i,j,y, x;
 	float l, m, s; // original
@@ -88,8 +94,11 @@ int simulate_cvd_deuteranopia(char * header, int size, unsigned char * buffer) {
 	fclose(fOut);
 	return 0;
 }
-int simulate_cvd_tritanopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_simulate_tritanopia.bmp","w+");		    	// Output File name
+int simulate_cvd_tritanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+{
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/nature_simulate_tritanopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	int i,j,y, x;
 	float l, m, s; // original

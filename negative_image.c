@@ -2,9 +2,13 @@
 #include<stdlib.h>
 #include<time.h>
 
-int image_negative(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_negative(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fOut = fopen("out/negative_image.bmp", "w+"); // Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/negative_image.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/negative_image.bmp", "w+"); // Output File name
 	int i,j; // loop counter variables
 	unsigned char out_buffer[width][height][3];
 	int bitDepth = *(int*)&header[28];

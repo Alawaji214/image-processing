@@ -10,9 +10,13 @@
 #include <omp.h>
 #include <math.h>
 
-int image_rgb_rotate_right(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fOut = fopen("out/rotate_right.bmp","w+");		    	//Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/rotate_right.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/rotate_right.bmp","w+");		    	//Output File name
 	int i,j;
 	int tempH, tempW;
 	unsigned char heightA[4];
@@ -63,9 +67,13 @@ int image_rgb_rotate_right(int threads, unsigned char header[54], int height, in
 	return 0;
 }
 
-int image_rgb_rotate_left(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fOut = fopen("out/rotate_left.bmp","w+");		    	//Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/rotate_left.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/rotate_left.bmp","w+");		    	//Output File name
 	int i,j,choice;
 	int tempH, tempW;
 	unsigned char heightA[4];
@@ -116,9 +124,14 @@ int image_rgb_rotate_left(int threads, unsigned char header[54], int height, int
 	return 0;
 }
 
-int image_rgb_rotate_180(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_180(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fOut = fopen("out/rotate_180.bmp","w+");		    	//Output File name
+
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/rotate_180.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/rotate_180.bmp","w+");		    	//Output File name
 	int i,j,choice;
 	int tempH, tempW;
 	unsigned char heightA[4];

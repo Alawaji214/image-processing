@@ -9,8 +9,13 @@
 #include <time.h>
 #include "color_blindess.c"
 
-int correct_cvd_protanopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_correct_protanopia.bmp","w+");		    	// Output File name
+int correct_cvd_protanopia(char imageFileName[100], char * header, int size, unsigned char * buffer) {
+
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/nature_correct_protanopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/nature_correct_protanopia.bmp","w+");		    	// Output File name
 
 	fwrite(header,sizeof(unsigned char),54,fOut);			// write the header back
 	unsigned char out[size][3];					// store the output image data
@@ -69,8 +74,14 @@ int correct_cvd_protanopia(char * header, int size, unsigned char * buffer) {
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_deuteranopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_correct_deuteranopia.bmp","w+");		    	// Output File name
+int correct_cvd_deuteranopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+{
+
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/nature_correct_deuteranopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/nature_correct_deuteranopia.bmp","w+");		    	// Output File name
 
 	fwrite(header,sizeof(unsigned char),54,fOut);			// write the header back
 	unsigned char out[size][3];					// store the output image data
@@ -129,8 +140,13 @@ int correct_cvd_deuteranopia(char * header, int size, unsigned char * buffer) {
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_tritanopia(char * header, int size, unsigned char * buffer) {
-	FILE *fOut = fopen("out/nature_correct_tritanopia.bmp","w+");		    	// Output File name
+int correct_cvd_tritanopia(char imageFileName[100], char * header, int size, unsigned char * buffer) {
+
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/nature_correct_tritanopia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/nature_correct_tritanopia.bmp","w+");		    	// Output File name
 
 	fwrite(header,sizeof(unsigned char),54,fOut);			// write the header back
 	unsigned char out[size][3];					// store the output image data

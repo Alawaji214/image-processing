@@ -9,9 +9,12 @@
 #include <time.h>
 #define MAX_VALUE 255
 
-int image_colortosepia(char * header, int size, unsigned char * buffer)
+int image_colortosepia(char imageFileName[100], char *header, int size, unsigned char *buffer)
 {
-	FILE *fOut = fopen("out/lena_sepia.bmp","w+");		    		//Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/sepia.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
 
 	int i,r,g,b;
 

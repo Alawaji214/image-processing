@@ -15,14 +15,19 @@
 #include "image_rotate.c"
 #include "negative_image.c"
 
-int number_of_threads = 1;
 
-int colored() {
+
+
+int colored(char imageFileName[]) {
 	omp_set_num_threads(14);
 
-	printf("******** This code is executing the colored image processing applications ****** \n");
-	FILE *fIn = fopen("images/airplane.bmp","r");			// Input File name
-	FILE *fIn3D = fopen("images/airplane.bmp", "r");		// Input File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
+
+	printf("******** This code is executing the colored image processing applications ***** \n");
+	printf(" ==  %s \n", ImageFilePath);
+	FILE *fIn = fopen(ImageFilePath , "r"); // Input File name
+	FILE *fIn3D = fopen(ImageFilePath, "r"); // Input File name
 	unsigned char header[54];
 	unsigned char colorTable[1024];
 	int i, j;
@@ -30,9 +35,9 @@ int colored() {
 	{											
 		printf("File does not exist.\n");
 	}
-	#pragma omp parallel for num_threads(1) //ordered
+#pragma omp parallel for num_threads(1) //ordered
 	for(i=0;i<54;i++)						// read the 54 byte header from fIn
-	{			
+	{
 		// #pragma omp ordered
 		{
 			header[i] = getc(fIn);
@@ -77,48 +82,47 @@ int colored() {
 	printf("size: %d\n",size);
 	#pragma omp parallel sections
 	{
-		#pragma omp section
-		image_colortosepia(header, size, buffer);
+#pragma omp section
+			image_colortosepia(imageFileName, header, size, buffer);
 
 		#pragma omp section
-		simulate_cvd_protanopia(header, size, buffer);
+		simulate_cvd_protanopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		simulate_cvd_deuteranopia(header, size, buffer);
+#pragma omp section
+		simulate_cvd_deuteranopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		simulate_cvd_tritanopia(header, size, buffer);
+#pragma omp section
+		simulate_cvd_tritanopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		correct_cvd_protanopia(header, size, buffer);
+#pragma omp section
+		correct_cvd_protanopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		correct_cvd_deuteranopia(header, size, buffer);
+#pragma omp section
+		correct_cvd_deuteranopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		correct_cvd_tritanopia(header, size, buffer);
+#pragma omp section
+		correct_cvd_tritanopia(imageFileName, header, size, buffer);
 
-		#pragma omp section
-		black_and_white(header, size, buffer, bitDepth, colorTable);
+#pragma omp section
+		black_and_white(imageFileName, header, size, buffer, bitDepth, colorTable);
 
-		#pragma omp section
-		image_bluring_color(header, size, height, width, buffer , bitDepth, colorTable);
+#pragma omp section
+		image_bluring_color(imageFileName, header, size, height, width, buffer, bitDepth, colorTable);
 
+#pragma omp section
+		image_rgb_rotate_right(imageFileName, header, height, width, D3buffer, colorTable);
 
-		#pragma omp section
-		image_rgb_rotate_right(number_of_threads, header, height, width, D3buffer, colorTable);
+#pragma omp section
+		image_rgb_rotate_left(imageFileName, header, height, width, D3buffer, colorTable);
 
-		#pragma omp section
-		image_rgb_rotate_left(number_of_threads, header, height, width, D3buffer, colorTable);
+#pragma omp section
+		image_rgb_rotate_180(imageFileName, header, height, width, D3buffer, colorTable);
 
-		#pragma omp section
-		image_rgb_rotate_180(number_of_threads, header, height, width, D3buffer, colorTable);
+#pragma omp section
+		image_negative(imageFileName, header, height, width, D3buffer, colorTable);
 
-		#pragma omp section
-		image_negative(number_of_threads, header, height, width, D3buffer, colorTable);
-
-		#pragma omp section
-		image_rgbtogray(number_of_threads, header, height, width, D3buffer, colorTable);
+#pragma omp section
+		image_rgbtogray(imageFileName, header, height, width, D3buffer, colorTable);
 	}
 
 	fclose(fIn);
@@ -126,14 +130,13 @@ int colored() {
 	return 0;
 }
 
-
-int nonColored() {
+int nonColored(char imageFileName[])
+{
 	omp_set_num_threads(3);
 
 	printf("******** This code is executing the non-colored image processing applications ****** \n");
 
-
-	FILE *fIn = fopen("images/lena512.bmp","r");			// Input File name
+	FILE *fIn = fopen(imageFileName, "r"); // Input File name
 	unsigned char header[54];
 	unsigned char colorTable[1024];
 	int i;
@@ -185,9 +188,26 @@ int nonColored() {
 	return 0;
 }
 
-
 int C = 1;
 
+int coloredImagesDriver()
+{
+	char coloredImages[6][100] = {
+		"airplane",
+		"baboon",
+		"barbara",
+		"BoatsColor",
+		"goldhill",
+		"lena_color",
+	};
+
+// #pragma omp parallel for
+	for (int i = 0; i < 6; i++)
+	{
+		// printf(" %s \n", coloredImages[i]);
+		colored(coloredImages[i]);
+	}
+}
 int main(int argc, char *argv[]) {
 
     
@@ -199,13 +219,13 @@ int main(int argc, char *argv[]) {
 		#pragma omp task
 		{
 			CStart = omp_get_wtime();
-			colored();
+			coloredImagesDriver();
 			CStop = omp_get_wtime();
 		}
 		#pragma omp task
 		{
 			NCStart = omp_get_wtime();
-			nonColored();
+			nonColored("images/boats.bmp");
 			NCStop = omp_get_wtime();
 		}
 	}

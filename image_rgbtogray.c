@@ -9,9 +9,15 @@
 #include <time.h>
 #include <omp.h>
 
-int image_rgbtogray(int threads, unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgbtogray(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
 {
-	FILE *fOut = fopen("out/image_gray.bmp", "w+"); // Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/image_gray.bmp", imageFileName);
+	printf("%s",ImageFilePath);
+
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/image_gray.bmp", "w+"); // Output File name
 	int i, j;
 	int tempH, tempW;
 	unsigned char heightA[4];
