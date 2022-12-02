@@ -1,10 +1,3 @@
-/**
-* @file image_rgbtogray.c
-* @brief C program to convert an RGB image to grayscale.
-* @author Priya Shah
-* @version v1
-* @date 2018-01-10
-*/
 #include <stdio.h>
 #include <time.h>
 #include <omp.h>
@@ -13,7 +6,7 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/image_gray.bmp", imageFileName);
-	printf("%s",ImageFilePath);
+	printf("%s", ImageFilePath);
 
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
@@ -27,8 +20,14 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 
 	double out_buffer[width][height];
 
-	#pragma omp parallel for private(j) //num_threads(threads)
-	for (i = 0; i < width; i++) // to rotate right
+	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
+	if (bitDepth <= 8)								 // if ColorTable present, extract it.
+	{
+		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
+	}
+
+#pragma omp parallel for private(j) 
+	for (i = 0; i < width; i++)		// to rotate right
 	{
 		for (j = 0; j < height; j++)
 		{
@@ -36,16 +35,9 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 		}
 	}
 
-	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
-	if (bitDepth <= 8)								 // if ColorTable present, extract it.
-	{
-		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
-	}
 
-	// #pragma omp parallel for num_threads(threads) private(j) ordered
 	for (i = 0; i < width; i++)
 	{
-	// #pragma omp ordered
 		for (j = 0; j < height; j++)
 		{
 			putc(out_buffer[i][j], fOut);
