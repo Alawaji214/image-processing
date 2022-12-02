@@ -12,7 +12,7 @@
 int simulate_cvd_protanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
 {
 	char ImageFilePath[100];
-	sprintf(ImageFilePath, "out/%s/nature_simulate_protanopia.bmp", imageFileName);
+	sprintf(ImageFilePath, "out/%s/simulate_protanopia.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	if(fOut==NULL)							// check if the input file has not been opened succesfully.

@@ -12,10 +12,8 @@
 int correct_cvd_protanopia(char imageFileName[100], char * header, int size, unsigned char * buffer) {
 
 	char ImageFilePath[150];
-	sprintf(ImageFilePath, "out/%s/nature_correct_protanopia.bmp", imageFileName);
+	sprintf(ImageFilePath, "out/%s/correct_protanopia.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
-
-	// FILE *fOut = fopen("out/nature_correct_protanopia.bmp","w+");		    	// Output File name
 
 	fwrite(header,sizeof(unsigned char),54,fOut);			// write the header back
 	unsigned char out[size][3];					// store the output image data
