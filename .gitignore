@@ -1,3 +1,9 @@
-out
+out/airplane/*
+out/baboon/*
+out/barbara/*
+out/BoatsColor/*
+out/goldhill/*
+out/lena_color/*
+
 gcc_image_processer
 icx_image_processer
