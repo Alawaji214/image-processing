@@ -1,11 +1,7 @@
-
 #include <stdio.h>
-#include <time.h>
 
 int image_bluring_color(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
-	clock_t start, stop;
-
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/bluring_color.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name

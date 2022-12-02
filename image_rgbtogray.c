@@ -6,11 +6,9 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/image_gray.bmp", imageFileName);
-	printf("%s", ImageFilePath);
 
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
-	// FILE *fOut = fopen("out/image_gray.bmp", "w+"); // Output File name
 	int i, j;
 	int tempH, tempW;
 	unsigned char heightA[4];
@@ -26,7 +24,6 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-#pragma omp parallel for private(j) 
 	for (i = 0; i < width; i++)		// to rotate right
 	{
 		for (j = 0; j < height; j++)

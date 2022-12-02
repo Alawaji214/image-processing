@@ -14,6 +14,12 @@
 #include "image_rotate.c"
 #include "negative_image.c"
 
+#ifdef RELEASE
+#define printer
+#else
+#define printer printf
+#endif
+
 int colored(char imageFileName[])
 {
 	omp_set_num_threads(14);
@@ -21,21 +27,21 @@ int colored(char imageFileName[])
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
 
-	printf("******** This code is executing the colored image processing applications ***** \n");
-	printf(" ==  %s \n", ImageFilePath);
+	printer("******** This code is executing the colored image processing applications ***** \n");
+	printer(" ==  %s \n", ImageFilePath);
 	FILE *fIn = fopen(ImageFilePath, "r");	 // Input File name
 	FILE *fIn3D = fopen(ImageFilePath, "r"); // Input File name
 	unsigned char header[54];
 	unsigned char colorTable[1024];
 	int i, j;
+
 	if (fIn == NULL) // check if the input file has not been opened succesfully.
 	{
 		printf("File does not exist.\n");
 	}
-#pragma omp parallel for num_threads(1) // ordered
-	for (i = 0; i < 54; i++)			// read the 54 byte header from fIn
+
+	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
 	{
-		// #pragma omp ordered
 		{
 			header[i] = getc(fIn);
 			getc(fIn3D);
@@ -53,10 +59,8 @@ int colored(char imageFileName[])
 	int size = height * width;				  // calculate image size
 	unsigned char D3buffer[width][height][3]; // to store the image data
 
-#pragma omp parallel for private(j) num_threads(1) // ordered
 	for (int i = 0; i < width; i++)
 	{
-		// #pragma omp ordered
 		for (j = 0; j < height; j++)
 		{
 			D3buffer[i][j][2] = getc(fIn3D); // blue
@@ -66,19 +70,19 @@ int colored(char imageFileName[])
 	}
 	unsigned char buffer[size][3]; // to store the image data
 
-#pragma omp parallel for num_threads(1) // ordered
 	for (i = 0; i < size; i++)
 	{
-		// #pragma omp ordered
 		{
 			buffer[i][2] = getc(fIn); // blue
 			buffer[i][1] = getc(fIn); // green
 			buffer[i][0] = getc(fIn); // red
 		}
 	}
-	printf("height: %d\n", height);
-	printf("width: %d\n", width);
-	printf("size: %d\n", size);
+
+	printer("height: %d\n", height);
+	printer("width: %d\n", width);
+	printer("size: %d\n", size);
+
 #pragma omp parallel sections
 	{
 #pragma omp section
@@ -125,7 +129,6 @@ int colored(char imageFileName[])
 	}
 
 	fclose(fIn);
-	// fclose(fOut);
 	return 0;
 }
 
@@ -133,7 +136,7 @@ int nonColored(char imageFileName[])
 {
 	omp_set_num_threads(3);
 
-	printf("******** This code is executing the non-colored image processing applications ****** \n");
+	printer("******** This code is executing the non-colored image processing applications ****** \n");
 
 	FILE *fIn = fopen(imageFileName, "r"); // Input File name
 	unsigned char header[54];
@@ -144,10 +147,9 @@ int nonColored(char imageFileName[])
 	{
 		printf("File does not exist.\n");
 	}
-#pragma omp parallel for num_threads(1) // ordered
-	for (i = 0; i < 54; i++)			// read the 54 byte header from fIn
+
+	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
 	{
-		// #pragma omp ordered
 		{
 			header[i] = getc(fIn);
 		}
@@ -165,14 +167,15 @@ int nonColored(char imageFileName[])
 	int size = height * width;	// calculate image size
 	unsigned char buffer[size]; // to store the image data
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		buffer[i] = getc(fIn);
 	}
-	printf("height: %d\n", height);
-	printf("width: %d\n", width);
-	printf("size: %d\n", size);
+
+	printer("height: %d\n", height);
+	printer("width: %d\n", width);
+	printer("size: %d\n", size);
+
 #pragma omp parallel sections
 	{
 #pragma omp section
@@ -201,10 +204,8 @@ int coloredImagesDriver()
 		"lena_color",
 	};
 
-	// #pragma omp parallel for
 	for (int i = 0; i < 6; i++)
 	{
-		// printf(" %s \n", coloredImages[i]);
 		colored(coloredImages[i]);
 	}
 }
