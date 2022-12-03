@@ -2,7 +2,7 @@
 #include <time.h>
 #include "color_blindess.c"
 
-int simulate_cvd_protanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int simulate_cvd_protanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[100];
 	sprintf(ImageFilePath, "out/%s/simulate_protanopia.bmp", imageFileName);
@@ -23,9 +23,9 @@ int simulate_cvd_protanopia(char imageFileName[100], char *header, int size, uns
 
 	for (i = 0; i < size; i++)
 	{
-		b = buffer[i * 3];	   // blue
-		g = buffer[i * 3 + 1]; // green
-		r = buffer[i * 3 + 2]; // red
+		b = buffer[i][0]; // blue
+		g = buffer[i][1]; // green
+		r = buffer[i][2]; // red
 
 		rgb2lms(r, g, b, &l, &m, &s);
 
@@ -48,7 +48,7 @@ int simulate_cvd_protanopia(char imageFileName[100], char *header, int size, uns
 	fclose(fOut);
 	return 0;
 }
-int simulate_cvd_deuteranopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int simulate_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/simulate_deuteranopia.bmp", imageFileName);
@@ -64,9 +64,9 @@ int simulate_cvd_deuteranopia(char imageFileName[100], char *header, int size, u
 
 	for (i = 0; i < size; i++)
 	{
-		b = buffer[i * 3];	   // blue
-		g = buffer[i * 3 + 1]; // green
-		r = buffer[i * 3 + 2]; // red
+		b = buffer[i][0]; // blue
+		g = buffer[i][1]; // green
+		r = buffer[i][2]; // red
 
 		rgb2lms(r, g, b, &l, &m, &s);
 
@@ -89,7 +89,7 @@ int simulate_cvd_deuteranopia(char imageFileName[100], char *header, int size, u
 	fclose(fOut);
 	return 0;
 }
-int simulate_cvd_tritanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int simulate_cvd_tritanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/simulate_tritanopia.bmp", imageFileName);
@@ -105,9 +105,9 @@ int simulate_cvd_tritanopia(char imageFileName[100], char *header, int size, uns
 
 	for (i = 0; i < size; i++)
 	{
-		b = buffer[i * 3];	   // blue
-		g = buffer[i * 3 + 1]; // green
-		r = buffer[i * 3 + 2]; // red
+		b = buffer[i][0]; // blue
+		g = buffer[i][1]; // green
+		r = buffer[i][2]; // red
 
 		rgb2lms(r, g, b, &l, &m, &s);
 

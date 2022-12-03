@@ -2,7 +2,7 @@
 #include <time.h>
 #include "color_blindess.c"
 
-int correct_cvd_protanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -20,9 +20,9 @@ int correct_cvd_protanopia(char imageFileName[100], char *header, int size, unsi
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index * 3];	   // red
-		g = buffer[index * 3 + 1]; // green
-		b = buffer[index * 3 + 2]; // blue
+		r = buffer[index][0]; // red
+		g = buffer[index][1]; // green
+		b = buffer[index][2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long
@@ -66,7 +66,7 @@ int correct_cvd_protanopia(char imageFileName[100], char *header, int size, unsi
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_deuteranopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -84,9 +84,9 @@ int correct_cvd_deuteranopia(char imageFileName[100], char *header, int size, un
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index * 3];	   // red
-		g = buffer[index * 3 + 1]; // green
-		b = buffer[index * 3 + 2]; // blue
+		r = buffer[index][0]; // red
+		g = buffer[index][1]; // green
+		b = buffer[index][2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long
@@ -130,7 +130,7 @@ int correct_cvd_deuteranopia(char imageFileName[100], char *header, int size, un
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_tritanopia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -148,9 +148,9 @@ int correct_cvd_tritanopia(char imageFileName[100], char *header, int size, unsi
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index * 3];	   // red
-		g = buffer[index * 3 + 1]; // green
-		b = buffer[index * 3 + 2]; // blue
+		r = buffer[index][0];	  // red
+		g = buffer[index][1]; // green
+		b = buffer[index][2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long

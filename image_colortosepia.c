@@ -2,7 +2,7 @@
 #include <time.h>
 #define MAX_VALUE 255
 
-int image_colortosepia(char imageFileName[100], char *header, int size, unsigned char *buffer)
+int image_colortosepia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/sepia.bmp", imageFileName);
@@ -12,8 +12,6 @@ int image_colortosepia(char imageFileName[100], char *header, int size, unsigned
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 
-	int bitDepth = *(int *)&header[28];
-
 	for (i = 0; i < size; i++)
 	{
 		r = 0;
@@ -21,9 +19,9 @@ int image_colortosepia(char imageFileName[100], char *header, int size, unsigned
 		b = 0;
 
 		// conversion formula of rgb to sepiabuffer
-		r = (buffer[i * 3 + 2] * 0.393) + (buffer[i * 3 + 1] * 0.769) + (buffer[i * 3 + 0] * 0.189);
-		g = (buffer[i * 3 + 2] * 0.349) + (buffer[i * 3 + 1] * 0.686) + (buffer[i * 3 + 0] * 0.168);
-		b = (buffer[i * 3 + 2] * 0.272) + (buffer[i * 3 + 1] * 0.534) + (buffer[i * 3 + 0] * 0.131);
+		r = (buffer[i][2] * 0.393) + (buffer[i][1] * 0.769) + (buffer[i][0] * 0.189);
+		g = (buffer[i][2] * 0.349) + (buffer[i][1] * 0.686) + (buffer[i][0] * 0.168);
+		b = (buffer[i][2] * 0.272) + (buffer[i][1] * 0.534) + (buffer[i][0] * 0.131);
 
 		if (r > MAX_VALUE)
 		{ // if value exceeds

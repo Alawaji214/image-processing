@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 int image_bluring_color(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
 {

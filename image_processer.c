@@ -86,25 +86,25 @@ int colored(char imageFileName[])
 #pragma omp parallel sections
 	{
 #pragma omp section
-		image_colortosepia(imageFileName, header, size, buffer);
+		image_colortosepia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		simulate_cvd_protanopia(imageFileName, header, size, buffer);
+		simulate_cvd_protanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		simulate_cvd_deuteranopia(imageFileName, header, size, buffer);
+		simulate_cvd_deuteranopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		simulate_cvd_tritanopia(imageFileName, header, size, buffer);
+		simulate_cvd_tritanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		correct_cvd_protanopia(imageFileName, header, size, buffer);
+		correct_cvd_protanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		correct_cvd_deuteranopia(imageFileName, header, size, buffer);
+		correct_cvd_deuteranopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
-		correct_cvd_tritanopia(imageFileName, header, size, buffer);
+		correct_cvd_tritanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
 
 #pragma omp section
 		black_and_white(imageFileName, header, size, buffer, bitDepth, colorTable);

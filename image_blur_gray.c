@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include <time.h>
+#include <string.h>
 
 int image_bluring_gray(unsigned char header[54], int size, int height, int width, unsigned char buffer[size], int bitDepth, unsigned char colorTable[1024])
 {
