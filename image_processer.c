@@ -200,7 +200,25 @@ int C = 1;
 
 int coloredImagesDriver()
 {
-	char coloredImages[6][100] = {
+	char coloredImages[24][100] = {
+		"airplane",
+		"baboon",
+		"barbara",
+		"BoatsColor",
+		"goldhill",
+		"lena_color",
+		"airplane",
+		"baboon",
+		"barbara",
+		"BoatsColor",
+		"goldhill",
+		"lena_color",
+		"airplane",
+		"baboon",
+		"barbara",
+		"BoatsColor",
+		"goldhill",
+		"lena_color",
 		"airplane",
 		"baboon",
 		"barbara",
@@ -209,7 +227,7 @@ int coloredImagesDriver()
 		"lena_color",
 	};
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 24; i++)
 	{
 		colored(coloredImages[i]);
 	}

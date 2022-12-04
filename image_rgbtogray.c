@@ -23,7 +23,8 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 	{
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
-
+	
+#pragma omp parallel for schedule(guided, 10) private(j)
 	for (i = 0; i < width; i++)		// to rotate right
 	{
 		for (j = 0; j < height; j++)
@@ -31,7 +32,6 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 			out_buffer[i][j] = (buffer[i][j][0] * 0.3 + buffer[i][j][1] * 0.59 + buffer[i][j][2] * 0.11);
 		}
 	}
-
 
 #pragma omp parallel for num_threads(1)
 	for (i = 0; i < width; i++)

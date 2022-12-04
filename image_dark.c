@@ -19,6 +19,7 @@ int image_dark(unsigned char *header, unsigned char *colorTable, int size, unsig
 
 	unsigned char image_buffer[size];
 	// Parallelizable segment
+#pragma omp parallel for schedule(guided, 10)
 	for (i = 0; i < size; i++) // decreasing pixel values to get image bright
 	{
 		if (buffer[i] > THRESHOLD)
