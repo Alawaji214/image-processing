@@ -21,21 +21,6 @@ int black_and_white(char imageFileName[100], unsigned char header[54], int size,
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-<<<<<<< HEAD
-	for(i=0;i<size;i++)									//store 0(black) and 255(white) values to buffer 
-		{								
-		if((buffer[i][0] > BW_THRESHOLD && buffer[i][1] > BW_THRESHOLD)||(buffer[i][0] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD)||(buffer[i][1] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD)){
-		y= WHITE ;
-		}else{
-		y= BLACK ;	
-		}
-			{
-			putc(y,fOut);
-			putc(y,fOut);
-			putc(y,fOut);
-			}
-=======
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++) // store 0(black) and 255(white) values to buffer
 	{
 		if ((buffer[i][0] > BW_THRESHOLD && buffer[i][1] > BW_THRESHOLD) 
@@ -47,7 +32,6 @@ int black_and_white(char imageFileName[100], unsigned char header[54], int size,
 		else
 		{
 			y = BLACK;
->>>>>>> f16d40e49a5b884202995712d16eb0c88e64b490
 		}
 		{
 			putc(y, fOut);

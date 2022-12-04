@@ -32,7 +32,6 @@ int image_rgbtogray(char imageFileName[100], unsigned char header[54], int heigh
 	}
 
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < width; i++)
 	{
 		for (j = 0; j < height; j++)

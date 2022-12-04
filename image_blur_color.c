@@ -19,16 +19,6 @@ int image_bluring_color(char imageFileName[100], unsigned char header[54], int s
 	unsigned char out[size][3]; // store the output image data
 	memcpy(out, buffer, (size*3));
 
-<<<<<<< HEAD
-	unsigned char out[size][3];					// store the output image data
-	float v=1.0 / 9.0;						// initialize the blurrring kernel
-	float kernel[3][3]={{v,v,v},
-						{v,v,v},
-						{v,v,v}};
-	for(x=1;x<height-1;x++)
-	{					
-		for(y=1;y<width-1;y++)
-=======
 	float v = 1.0 / 9.0;		// initialize the blurrring kernel
 	float kernel[3][3] = {{v, v, v},
 						  {v, v, v},
@@ -36,7 +26,6 @@ int image_bluring_color(char imageFileName[100], unsigned char header[54], int s
 	for (x = 1; x < height - 1; x++)
 	{
 		for (y = 1; y < width - 1; y++)
->>>>>>> f16d40e49a5b884202995712d16eb0c88e64b490
 		{
 			float sum0 = 0.0;
 			float sum1 = 0.0;
@@ -56,13 +45,8 @@ int image_bluring_color(char imageFileName[100], unsigned char header[54], int s
 			out[(x)*width + (y)][2] = sum2;
 		}
 	}
-<<<<<<< HEAD
-	for(i=0;i<size;i++)						//write image data back to the file
-=======
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++) // write image data back to the file
->>>>>>> f16d40e49a5b884202995712d16eb0c88e64b490
 	{
 		putc(out[i][2], fOut);
 		putc(out[i][1], fOut);

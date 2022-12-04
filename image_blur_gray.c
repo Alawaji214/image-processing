@@ -19,26 +19,10 @@ int image_bluring_gray(unsigned char header[54], int size, int height, int width
 	unsigned char out[size]; // to store the image data
 	memcpy(out, buffer, size);
 
-<<<<<<< HEAD
-	unsigned char out[size];						//to store the image data
-	
-	float v=1.0 / 9.0;											
-	float kernel[3][3]={{v,v,v},								//initialize the blurrring kernel
-						{v,v,v},
-						{v,v,v}};
-	
-		{
-
-		for(i=0;i<size;i++)
-			{
-				out[i] = buffer[i];										//copy image data to out bufer
-			}
-=======
 	float v = 1.0 / 9.0;
 	float kernel[3][3] = {{v, v, v}, // initialize the blurrring kernel
 						  {v, v, v},
 						  {v, v, v}};
->>>>>>> f16d40e49a5b884202995712d16eb0c88e64b490
 
 	for (x = 1; x < height - 1; x++)
 	{
