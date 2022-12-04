@@ -12,6 +12,7 @@ int image_colortosepia(char imageFileName[100], unsigned char header[54], int si
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 
+#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		r = 0;

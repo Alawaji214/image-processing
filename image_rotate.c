@@ -49,6 +49,7 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
+#pragma omp parallel for num_threads(1)
 	for (i = 0; i < height; i++)
 	{
 		for (j = 0; j < width; j++)

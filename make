@@ -10,6 +10,6 @@ fi
 # ICX
 if command -v icx &> /dev/null
 then
-    icx -fopenmp image_processer.c -o icx_image_processer_release -DRELEASE
-    icx -fopenmp image_processer.c -o icx_image_processer
+    icx -qopenmp image_processer.c -o icx_image_processer_release -DRELEASE 
+    icx -qopenmp image_processer.c -o icx_image_processer
 fi

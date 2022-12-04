@@ -40,7 +40,8 @@ int colored(char imageFileName[])
 		printf("File does not exist.\n");
 	}
 
-	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
+#pragma omp parallel for num_threads(1) // ordered
+	for (i = 0; i < 54; i++)			// read the 54 byte header from fIn
 	{
 		{
 			header[i] = getc(fIn);
@@ -59,6 +60,7 @@ int colored(char imageFileName[])
 	int size = height * width;				  // calculate image size
 	unsigned char D3buffer[width][height][3]; // to store the image data
 
+#pragma omp parallel for private(j) num_threads(1) //ordered
 	for (int i = 0; i < width; i++)
 	{
 		for (j = 0; j < height; j++)
@@ -70,6 +72,7 @@ int colored(char imageFileName[])
 	}
 	unsigned char buffer[size][3]; // to store the image data
 
+#pragma omp parallel for num_threads(1) //ordered 
 	for (i = 0; i < size; i++)
 	{
 		{
@@ -148,6 +151,7 @@ int nonColored(char imageFileName[])
 		printf("File does not exist.\n");
 	}
 
+#pragma omp parallel for num_threads(1) //ordered 
 	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
 	{
 		{
@@ -167,6 +171,7 @@ int nonColored(char imageFileName[])
 	int size = height * width;	// calculate image size
 	unsigned char buffer[size]; // to store the image data
 
+#pragma omp parallel for num_threads(1) 
 	for (i = 0; i < size; i++)
 	{
 		buffer[i] = getc(fIn);
@@ -208,7 +213,10 @@ int coloredImagesDriver()
 	{
 		colored(coloredImages[i]);
 	}
+
+	return 0;
 }
+
 int main(int argc, char *argv[])
 {
 

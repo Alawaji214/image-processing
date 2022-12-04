@@ -29,6 +29,7 @@ int image_negative(char imageFileName[100], unsigned char header[54], int height
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
+#pragma omp parallel for num_threads(1)
 	for (i = 0; i < width; i++)
 	{
 		for (j = 0; j < height; j++)
