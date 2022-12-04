@@ -1,0 +1,12 @@
+out/airplane/*.bmp
+out/baboon/*.bmp
+out/barbara/*.bmp
+out/BoatsColor/*.bmp
+out/goldhill/*.bmp
+out/lena_color/*.bmp
+out/*.bmp
+
+icx_image_processer
+icx_image_processer_release
+gcc_image_processer
+gcc_image_processer_release
