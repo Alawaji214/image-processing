@@ -1,9 +1,9 @@
-out/airplane/*
-out/baboon/*
-out/barbara/*
-out/BoatsColor/*
-out/goldhill/*
-out/lena_color/*
+out/airplane/*.bmp
+out/baboon/*.bmp
+out/barbara/*.bmp
+out/BoatsColor/*.bmp
+out/goldhill/*.bmp
+out/lena_color/*.bmp
 out/*.bmp
 
 icx_image_processer
