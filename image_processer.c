@@ -209,8 +209,10 @@ int coloredImagesDriver()
 		"lena_color",
 	};
 
+#pragma omp parallel for
 	for (int i = 0; i < 6; i++)
 	{
+		// Process image
 		colored(coloredImages[i]);
 	}
 
