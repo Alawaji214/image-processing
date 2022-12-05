@@ -1,9 +1,13 @@
 #include <stdio.h>
 #define THRESHOLD 40
 
-int image_dark(unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
+int image_dark(char imageFileName[100], unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
 {
-	FILE *fOut = fopen("out/lena_dark.bmp", "w+"); // Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/image_dark.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/lena_dark.bmp", "w+"); // Output File name
 
 	int i;
 

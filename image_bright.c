@@ -3,9 +3,13 @@
 #define MAX_COLOR 255
 #define BRIGHTNESS_FACTOR 25
 
-int image_bright(unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
+int image_bright(char imageFileName[100], unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
 {
-	FILE *fOut = fopen("out/lena_bright.bmp", "w+"); // Output File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/image_bright.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
+
+	// FILE *fOut = fopen("out/lena_bright.bmp", "w+"); // Output File name
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 

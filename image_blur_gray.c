@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
-int image_bluring_gray(unsigned char header[54], int size, int height, int width, unsigned char buffer[size], int bitDepth, unsigned char colorTable[1024])
+int image_bluring_gray(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size], int bitDepth, unsigned char colorTable[1024])
 {
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "out/%s/image_bluring_gray.bmp", imageFileName);
+	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
-	FILE *fOut = fopen("out/bluring_gray.bmp", "w+"); // Output File name
+	// FILE *fOut = fopen("out/bluring_gray.bmp", "w+"); // Output File name
 
 	int i, j, y, x;
 
