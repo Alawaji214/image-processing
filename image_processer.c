@@ -141,7 +141,13 @@ int nonColored(char imageFileName[])
 
 	printer("******** This code is executing the non-colored image processing applications ****** \n");
 
-	FILE *fIn = fopen(imageFileName, "r"); // Input File name
+	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
+	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
+	char ImageFilePath[150];
+	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
+	printer(" ==  %s \n", ImageFilePath);
+	FILE *fIn = fopen(ImageFilePath, "r"); // Input File name
+
 	unsigned char header[54];
 	unsigned char colorTable[1024];
 	int i;
@@ -184,13 +190,13 @@ int nonColored(char imageFileName[])
 #pragma omp parallel sections
 	{
 #pragma omp section
-		image_bluring_gray(header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
+		image_bluring_gray(imageFileName, header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
 
 #pragma omp section
-		image_dark(header, colorTable, size, buffer);
+		image_dark(imageFileName, header, colorTable, size, buffer);
 
 #pragma omp section
-		image_bright(header, colorTable, size, buffer);
+		image_bright(imageFileName, header, colorTable, size, buffer);
 	}
 	fclose(fIn);
 	return 0;
@@ -237,6 +243,44 @@ int coloredImagesDriver()
 	return 0;
 }
 
+int nonColoredImagesDriver()
+{
+	char nonColoredImages[24][100] = {
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+		"boats",
+	};
+
+#pragma omp parallel for
+	for (int i = 0; i < 24; i++)
+	{
+		nonColored(nonColoredImages[i]);
+	}
+
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -253,8 +297,9 @@ int main(int argc, char *argv[])
 #pragma omp task
 		{
 			NCStart = omp_get_wtime();
-			nonColored("images/boats.bmp");
-			NCStop = omp_get_wtime();
+			// nonColored("images/boats.bmp");
+			nonColoredImagesDriver();
+				NCStop = omp_get_wtime();
 		}
 	}
 
