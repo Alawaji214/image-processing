@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
             }
             buffer = malloc( imgsize * 3 ); // to store the image data
 
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < imgsize; i++)
             {
                 {
                     buffer[i * 3 + 2] = getc(fIn); // blue
@@ -117,62 +117,64 @@ int main(int argc, char *argv[])
             printer("width: %d\n", width);
             printer("imgsize: %d\n", imgsize);
 
+            // MPI_Bcast(&height, 1, MPI_INT, 0, comm);
+            // MPI_Bcast(&width, 1, MPI_INT, 0, comm);
+            // MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
+            // MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
+            // // MPI_Bcast(&buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
+            // // MPI_Bcast(&D3buffer, width * height * 3, MPI_UNSIGNED_CHAR, 0, comm);
+            
+            
+            
+            // MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
+            // MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
+
+
+        }
+        // else
+        // {
             MPI_Bcast(&height, 1, MPI_INT, 0, comm);
             MPI_Bcast(&width, 1, MPI_INT, 0, comm);
             MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
             MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
-            MPI_Bcast(&buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
-            MPI_Bcast(&D3buffer, width * height * 3, MPI_UNSIGNED_CHAR, 0, comm);
-            
-            
-            
+            // D3buffer = malloc(width * height * 3);
+            // buffer = malloc(imgsize * 3);
+            // MPI_Bcast(&buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
+            // MPI_Bcast(&D3buffer, width * height * 3, MPI_UNSIGNED_CHAR, 0, comm);
             MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
             MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
+        // }
 
+        // if(rank == 0){
+        //     image_colortosepia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        }
-        else
-        {
-            MPI_Bcast(&height, 1, MPI_INT, 0, comm);
-            MPI_Bcast(&width, 1, MPI_INT, 0, comm);
-            MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
-            MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
-            D3buffer = malloc(width * height * 3);
-            buffer = malloc(imgsize * 3);
+        //     simulate_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-            MPI_Bcast(&buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
-            MPI_Bcast(&D3buffer, width * height * 3, MPI_UNSIGNED_CHAR, 0, comm);
-            MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
-            MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
-        }
+        //     simulate_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        image_colortosepia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     simulate_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        simulate_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     correct_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        simulate_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     correct_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        simulate_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     correct_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
 
-        correct_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     black_and_white(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        // }
+        // else{
+        //     image_bluring_color(coloredImages[imgIndex], header, imgsize, height, width, buffer, bitDepth, colorTable);
 
-        correct_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     image_rgb_rotate_right(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
 
-        correct_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     image_rgb_rotate_left(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
 
-        black_and_white(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+        //     image_rgb_rotate_180(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
 
-        image_bluring_color(coloredImages[imgIndex], header, imgsize, height, width, buffer, bitDepth, colorTable);
+        //     image_negative(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
 
-        image_rgb_rotate_right(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
-
-        image_rgb_rotate_left(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
-
-        image_rgb_rotate_180(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
-
-        image_negative(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
-
-        image_rgbtogray(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        //     image_rgbtogray(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        // }
     }
 
     MPI_Finalize();
