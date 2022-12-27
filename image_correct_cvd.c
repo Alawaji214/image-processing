@@ -2,7 +2,7 @@
 #include <time.h>
 #include "color_blindess.c"
 
-int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
+int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -10,7 +10,7 @@ int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], in
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
-	unsigned char out[size][3];						 // store the output image data
+	unsigned char *out[size*3];						 // store the output image data
 	unsigned int index;
 
 	unsigned char r, g, b;
@@ -20,9 +20,9 @@ int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], in
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index][0]; // red
-		g = buffer[index][1]; // green
-		b = buffer[index][2]; // blue
+		r = buffer[index*3+0]; // red
+		g = buffer[index*3+1]; // green
+		b = buffer[index*3+2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long
@@ -51,22 +51,22 @@ int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], in
 		g = (gg > 255) ? 255 : ((gg < 0) ? 0 : gg);
 		b = (bb > 255) ? 255 : ((bb < 0) ? 0 : bb);
 
-		out[index][0] = r;
-		out[index][1] = g;
-		out[index][2] = b;
+		out[index*3+0] = r;
+		out[index*3+1] = g;
+		out[index*3+2] = b;
 	}
 
 	for (index = 0; index < size; index++)
 	{
-		putc(out[index][2], fOut);
-		putc(out[index][1], fOut);
-		putc(out[index][0], fOut);
+		putc(out[index*3+2], fOut);
+		putc(out[index*3+1], fOut);
+		putc(out[index*3+0], fOut);
 	}
 
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
+int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -74,7 +74,7 @@ int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], 
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
-	unsigned char out[size][3];						 // store the output image data
+	unsigned char *out[size*3];						 // store the output image data
 	unsigned int index;
 
 	unsigned char r, g, b;
@@ -84,9 +84,9 @@ int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], 
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index][0]; // red
-		g = buffer[index][1]; // green
-		b = buffer[index][2]; // blue
+		r = buffer[index*3+0]; // red
+		g = buffer[index*3+1]; // green
+		b = buffer[index*3+2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long
@@ -115,22 +115,22 @@ int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], 
 		g = (gg > 255) ? 255 : ((gg < 0) ? 0 : gg);
 		b = (bb > 255) ? 255 : ((bb < 0) ? 0 : bb);
 
-		out[index][0] = r;
-		out[index][1] = g;
-		out[index][2] = b;
+		out[index*3+0] = r;
+		out[index*3+1] = g;
+		out[index*3+2] = b;
 	}
 
 	for (index = 0; index < size; index++)
 	{
-		putc(out[index][2], fOut);
-		putc(out[index][1], fOut);
-		putc(out[index][0], fOut);
+		putc(out[index*3+2], fOut);
+		putc(out[index*3+1], fOut);
+		putc(out[index*3+0], fOut);
 	}
 
 	fclose(fOut);
 	return 0;
 }
-int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
+int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -138,7 +138,7 @@ int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], in
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
-	unsigned char out[size][3];						 // store the output image data
+	unsigned char out[size*3];						 // store the output image data
 	unsigned int index;
 
 	unsigned char r, g, b;
@@ -148,9 +148,9 @@ int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], in
 
 	for (index = 0; index < size; index++)
 	{
-		r = buffer[index][0];	  // red
-		g = buffer[index][1]; // green
-		b = buffer[index][2]; // blue
+		r = buffer[index*3+0];	  // red
+		g = buffer[index*3+1]; // green
+		b = buffer[index*3+2]; // blue
 
 		// convert to lms
 		l = (17.8824 * r) + (43.5161 * g) + (4.11935 * b);	  // long
@@ -179,17 +179,17 @@ int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], in
 		g = (gg > 255) ? 255 : ((gg < 0) ? 0 : gg);
 		b = (bb > 255) ? 255 : ((bb < 0) ? 0 : bb);
 
-		out[index][0] = r;
-		out[index][1] = g;
-		out[index][2] = b;
+		out[index*3+0] = r;
+		out[index*3+1] = g;
+		out[index*3+2] = b;
 	}
 
 	// write image data back to the file
 	for (index = 0; index < size; index++)
 	{
-		putc(out[index][2], fOut);
-		putc(out[index][1], fOut);
-		putc(out[index][0], fOut);
+		putc(out[index*3+2], fOut);
+		putc(out[index*3+1], fOut);
+		putc(out[index*3+0], fOut);
 	}
 
 	fclose(fOut);
