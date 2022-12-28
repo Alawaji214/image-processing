@@ -1,8 +1,8 @@
-
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h> // include the stdlib.h header for malloc
 
-int image_bluring_gray(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size], int bitDepth, unsigned char colorTable[1024])
+int image_bluring_gray(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/image_bluring_gray.bmp", imageFileName);
@@ -19,7 +19,7 @@ int image_bluring_gray(char imageFileName[100], unsigned char header[54], int si
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-	unsigned char out[size]; // to store the image data
+	unsigned char *out = malloc(sizeof(unsigned char) * size); // allocate memory for the image data on the heap
 	memcpy(out, buffer, size);
 
 	float v = 1.0 / 9.0;
@@ -44,6 +44,7 @@ int image_bluring_gray(char imageFileName[100], unsigned char header[54], int si
 	}
 
 	fwrite(out, sizeof(unsigned char), size, fOut); // write image data back to the file
+	free(out);										// free the memory allocated for the image data
 	fclose(fOut);
 	return 0;
 }

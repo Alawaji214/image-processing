@@ -3,7 +3,7 @@
 #include <math.h>
 #include <string.h>
 
-int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char *buffer, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/rotate_right.bmp", imageFileName);
@@ -26,9 +26,9 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 		for (j = 0; j < height; j++)
 		{
 			tempH--;
-			out_buffer[tempH][i][2] = buffer[i][j][2];
-			out_buffer[tempH][i][1] = buffer[i][j][1];
-			out_buffer[tempH][i][0] = buffer[i][j][0];
+			out_buffer[tempH][i][2] = buffer[(i * width + j) * 3 + 2];
+			out_buffer[tempH][i][1] = buffer[(i * width + j) * 3 + 1];
+			out_buffer[tempH][i][0] = buffer[(i * width + j) * 3 + 0];
 		}
 	}
 
@@ -59,7 +59,7 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 	return 0;
 }
 
-int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char *buffer, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/rotate_left.bmp", imageFileName);
@@ -82,9 +82,9 @@ int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int
 		for (j = 0; j < width; j++)
 		{
 			tempW--;
-			out_buffer[i][tempW][2] = buffer[j][i][2];
-			out_buffer[i][tempW][1] = buffer[j][i][1];
-			out_buffer[i][tempW][0] = buffer[j][i][0];
+			out_buffer[i][tempW][2] = buffer[(i * width + j) * 3 + 2];
+			out_buffer[i][tempW][1] = buffer[(i * width + j) * 3 + 1];
+			out_buffer[i][tempW][0] = buffer[(i * width + j) * 3 + 0];
 		}
 	}
 
@@ -114,7 +114,7 @@ int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int
 	return 0;
 }
 
-int image_rgb_rotate_180(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_rgb_rotate_180(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char *buffer, unsigned char colorTable[1024])
 {
 
 	char ImageFilePath[150];
@@ -134,9 +134,9 @@ int image_rgb_rotate_180(char imageFileName[100], unsigned char header[54], int 
 	{
 		for (j = height - 1; j >= 0; j--)
 		{
-			out_buffer[i][j][2] = buffer[width - 1 - i][j][2];
-			out_buffer[i][j][1] = buffer[width - 1 - i][j][1];
-			out_buffer[i][j][0] = buffer[width - 1 - i][j][0];
+			out_buffer[i][j][2] = buffer[(height * width - 1 - i * width + j) * 3 + 2];
+			out_buffer[i][j][1] = buffer[(height * width - 1 - i * width + j) * 3 + 1];
+			out_buffer[i][j][0] = buffer[(height * width - 1 - i * width + j) * 3 + 0];
 		}
 	}
 

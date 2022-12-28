@@ -54,6 +54,11 @@ int simulate_cvd_deuteranopia(char imageFileName[100], unsigned char header[54],
 	sprintf(ImageFilePath, "out/%s/simulate_deuteranopia.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
+	if (fOut == NULL) // check if the output file has not been opened succesfully.
+	{
+		printf("File did not open.\n");
+	}
+
 	int i, j, y, x;
 	float l, m, s; // original
 	unsigned char r, g, b;

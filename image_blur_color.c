@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-int image_bluring_color(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
+int image_bluring_color(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/bluring_color.bmp", imageFileName);
@@ -35,9 +35,9 @@ int image_bluring_color(char imageFileName[100], unsigned char header[54], int s
 				for (j = -1; j <= 1; ++j)
 				{
 					// matrix multiplication with kernel with every color plane
-					sum0 = sum0 + (float)kernel[i + 1][j + 1] * buffer[(x + i) * width + (y + j)][0];
-					sum1 = sum1 + (float)kernel[i + 1][j + 1] * buffer[(x + i) * width + (y + j)][1];
-					sum2 = sum2 + (float)kernel[i + 1][j + 1] * buffer[(x + i) * width + (y + j)][2];
+					sum0 = sum0 + (float)kernel[i + 1][j + 1] * buffer[((x + i) * width + (y + j)) * 3 + 0];
+					sum1 = sum1 + (float)kernel[i + 1][j + 1] * buffer[((x + i) * width + (y + j)) * 3 + 1];
+					sum2 = sum2 + (float)kernel[i + 1][j + 1] * buffer[((x + i) * width + (y + j)) * 3 + 2];
 				}
 			}
 			out[(x)*width + (y)][0] = sum0;

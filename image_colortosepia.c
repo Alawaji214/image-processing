@@ -14,7 +14,6 @@ int image_colortosepia(char imageFileName[100], unsigned char header[54], int si
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 
-	printf("start %d\n", size);
 	for (i = 0; i < size; i++)
 	{
 		r = 0;
@@ -41,7 +40,6 @@ int image_colortosepia(char imageFileName[100], unsigned char header[54], int si
 		putc(g, fOut);
 		putc(r, fOut);
 	}
-	printf("end\n");
 
 	fclose(fOut);
 

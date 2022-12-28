@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int image_negative(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char buffer[width][height][3], unsigned char colorTable[1024])
+int image_negative(char imageFileName[100], unsigned char header[54], int height, int width, unsigned char *buffer, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/negative_image.bmp", imageFileName);
@@ -17,9 +17,9 @@ int image_negative(char imageFileName[100], unsigned char header[54], int height
 	{
 		for (j = 0; j < height; j++)
 		{
-			out_buffer[i][j][0] = 0xFF - buffer[i][j][0];
-			out_buffer[i][j][1] = 0xFF - buffer[i][j][1];
-			out_buffer[i][j][2] = 0xFF - buffer[i][j][2];
+			out_buffer[i][j][0] = 0xFF - buffer[(i * width + j) * 3 + 0];
+			out_buffer[i][j][1] = 0xFF - buffer[(i * width + j) * 3 + 1];
+			out_buffer[i][j][2] = 0xFF - buffer[(i * width + j) * 3 + 2];
 		}
 	}
 

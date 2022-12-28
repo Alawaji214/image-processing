@@ -6,7 +6,7 @@
 #define WHITE 255
 #define BLACK 0
 
-int black_and_white(char imageFileName[100], unsigned char header[54], int size, unsigned char buffer[size][3], int bitDepth, unsigned char colorTable[1024])
+int black_and_white(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/black_and_white.bmp", imageFileName);
@@ -23,9 +23,9 @@ int black_and_white(char imageFileName[100], unsigned char header[54], int size,
 
 	for (i = 0; i < size; i++) // store 0(black) and 255(white) values to buffer
 	{
-		if ((buffer[i][0] > BW_THRESHOLD && buffer[i][1] > BW_THRESHOLD) 
-		 || (buffer[i][0] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD) 
-		 || (buffer[i][1] > BW_THRESHOLD && buffer[i][2] > BW_THRESHOLD))
+		if ((buffer[i * 3 + 0] > BW_THRESHOLD && buffer[i * 3 + 1] > BW_THRESHOLD) 
+		 || (buffer[i * 3 + 0] > BW_THRESHOLD && buffer[i * 3 + 2] > BW_THRESHOLD) 
+		 || (buffer[i * 3 + 1] > BW_THRESHOLD && buffer[i * 3 + 2] > BW_THRESHOLD))
 		{
 			y = WHITE;
 		}

@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
 {
     // Initialize the MPI environment
     int numImages = 24;
+    int numImages_nc = 24;
 
     char coloredImages[24][100] = {
         "airplane",
@@ -51,6 +52,35 @@ int main(int argc, char *argv[])
         "goldhill",
         "lena_color",
     };
+
+    char nonColoredImages[24][100] = {
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+    };
+
+
     char ImageFilePath[150];
     FILE *fIn;
     FILE *fIn3D;
@@ -61,6 +91,10 @@ int main(int argc, char *argv[])
     int bitDepth;
     int imgsize;
     unsigned char *buffer, *D3buffer;
+    int function_indices[13] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    int function_indices_nc[3] = {0, 1, 2};
+    int function_index;
+    int result;
 
     MPI_Init(&argc, &argv);
     MPI_Comm comm = MPI_COMM_WORLD;
@@ -97,9 +131,9 @@ int main(int argc, char *argv[])
             {
                 for (int j = 0; j < height; j++)
                 {
-                    D3buffer[i * width + j * 3 + 2] = getc(fIn3D); // blue
-                    D3buffer[i * width + j * 3 + 1] = getc(fIn3D); // green
-                    D3buffer[i * width + j * 3 + 0] = getc(fIn3D); // red
+                    D3buffer[(i * width + j) * 3 + 2] = getc(fIn3D); // blue
+                    D3buffer[(i * width + j) * 3 + 1] = getc(fIn3D); // green
+                    D3buffer[(i * width + j) * 3 + 0] = getc(fIn3D); // red
                 }
             }
             buffer = malloc(imgsize * 3); // to store the image data
@@ -112,20 +146,6 @@ int main(int argc, char *argv[])
                     buffer[i * 3 + 0] = getc(fIn); // red
                 }
             }
-
-            printer("height: %d\n", height);
-            printer("width: %d\n", width);
-            printer("imgsize: %d\n", imgsize);
-
-            // MPI_Bcast(&height, 1, MPI_INT, 0, comm);
-            // MPI_Bcast(&width, 1, MPI_INT, 0, comm);
-            // MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
-            // MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
-            // // MPI_Bcast(&buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
-            // // MPI_Bcast(&D3buffer, width * height * 3, MPI_UNSIGNED_CHAR, 0, comm);
-
-            // MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
-            // MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
         }
 
         MPI_Bcast(&height, 1, MPI_INT, 0, comm);
@@ -135,52 +155,168 @@ int main(int argc, char *argv[])
 
         if(rank !=0)
         {
-            printf("meow 1.1\n");
             D3buffer = malloc(width * height * 3);
             buffer = malloc(imgsize * 3);
         }
         MPI_Bcast(buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(D3buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
 
-        printf("meow 1.2\n");
 
         MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
         // }
 
+        int indices_per_process = 14 / size;
+        int remaining_indices = 14 % size;
+
+        int function_indices_for_process[indices_per_process+1];
+
+        for (int i = 0; i < indices_per_process; i++)
+        {
+            function_indices_for_process[i] = -1;
+        }
+
+        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT,function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+
+        for (int i = 0; i < indices_per_process + 1; i++)
+        {
+            if(function_indices_for_process[i] < 0 || function_indices_for_process[i] > 13)
+            {
+                break;
+            }
+            printf("rank = %d \t - \t function = %d \n", rank, function_indices_for_process[i]);
+            switch (function_indices_for_process[i])
+            {
+            case 0:
+                image_colortosepia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 1:
+                simulate_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 2:
+                simulate_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 3:
+                simulate_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 4:
+                correct_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 5:
+                correct_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 6:
+                correct_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 7:
+                black_and_white(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+                break;
+            case 8:
+                image_bluring_color(coloredImages[imgIndex], header, imgsize, height, width, buffer, bitDepth, colorTable);
+                break;
+            case 9:
+                image_rgb_rotate_right(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+                break;
+            case 10:
+                image_rgb_rotate_left(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+                break;
+            case 11:
+                image_rgb_rotate_180(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+                break;
+            case 12:
+                image_negative(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+                break;
+            case 13:
+                image_rgbtogray(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    for (int imgIndex = 0; imgIndex < numImages_nc; imgIndex++)
+    {
         if (rank == 0)
         {
+            sprintf(ImageFilePath, "images/%s.bmp", nonColoredImages[imgIndex]);
+            fIn = fopen(ImageFilePath, "r");   // Input File name
+            for (int i = 0; i < 54; i++)       // read the 54 byte header from fIn
+            {
+                {
+                    header[i] = getc(fIn);
+                }
+            }
+            height = *(int *)&header[18];
+            width = *(int *)&header[22];
+            bitDepth = *(int *)&header[28];
+            if (bitDepth <= 8) // if ColorTable present, extract it.
+            {
+                fread(colorTable, sizeof(unsigned char), 1024, fIn);
+            }
 
-            printf("rank is: %d", rank);
-            image_colortosepia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+            imgsize = height * width; // calculate image size
+            // D3buffer[width][height][3];
+            buffer = malloc(imgsize); // to store the image data
 
-            // simulate_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // simulate_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // simulate_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // correct_cvd_protanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // correct_cvd_deuteranopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // correct_cvd_tritanopia(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
-
-            // black_and_white(coloredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
+            for (int i = 0; i < imgsize; i++)
+            {
+                {
+                    buffer[i] = getc(fIn);
+                }
+            }
         }
-        else
+
+        MPI_Bcast(&height, 1, MPI_INT, 0, comm);
+        MPI_Bcast(&width, 1, MPI_INT, 0, comm);
+        MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
+        MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
+
+        if (rank != 0)
         {
-            // image_bluring_color(coloredImages[imgIndex], header, imgsize, height, width, buffer, bitDepth, colorTable);
+            buffer = malloc(imgsize);
+        }
+        MPI_Bcast(buffer, imgsize, MPI_UNSIGNED_CHAR, 0, comm);
 
-            // image_rgb_rotate_right(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
+        MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
+        // }
 
-            // image_rgb_rotate_left(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        int indices_per_process = 3 / size;
+        int remaining_indices = 3 % size;
 
-            // image_rgb_rotate_180(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        int function_indices_for_process[indices_per_process + 1];
 
-            // image_negative(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        for (int i = 0; i < indices_per_process; i++)
+        {
+            function_indices_for_process[i] = -1;
+        }
 
-            // image_rgbtogray(coloredImages[imgIndex], header, height, width, D3buffer, colorTable);
+        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+
+        for (int i = 0; i < indices_per_process + 1; i++)
+        {
+            if (function_indices_for_process[i] < 0 || function_indices_for_process[i] > 2)
+            {
+                break;
+            }
+            printf("nc :: rank = %d \t - \t function = %d \n", rank, function_indices_for_process[i]);
+            switch (function_indices_for_process[i])
+            {
+            case 0:
+                image_bluring_gray(nonColoredImages[imgIndex], header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
+                break;
+            case 1:
+                // image_dark(nonColoredImages[imgIndex], header, colorTable, size, buffer);
+                break;
+            case 2:
+                // image_bright(nonColoredImages[imgIndex], header, colorTable, size, buffer);
+                break;
+            default:
+                break;
+            }
         }
     }
 
