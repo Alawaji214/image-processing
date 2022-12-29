@@ -38,7 +38,6 @@ int simulate_cvd_protanopia(char imageFileName[100], unsigned char header[54], i
 		out[i][2] = b;
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		putc(out[i][2], fOut);
@@ -80,7 +79,6 @@ int simulate_cvd_deuteranopia(char imageFileName[100], unsigned char header[54],
 		out[i][2] = b;
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		putc(out[i][2], fOut);
@@ -122,7 +120,6 @@ int simulate_cvd_tritanopia(char imageFileName[100], unsigned char header[54], i
 		out[i][2] = b;
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		putc(out[i][2], fOut);
