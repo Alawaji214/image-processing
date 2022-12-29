@@ -1,19 +1,58 @@
 #include <stdio.h>
 #define THRESHOLD 40
 
-int image_dark(char imageFileName[100], unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
+#ifdef RELEASE
+#define printer
+#else
+#define printer printf
+#endif
+
+int image_dark(char imageFileName[100])
 {
-	// FILE *fOut = fopen("out/lena_dark.bmp", "w+"); // Output File name
 	char ImageFilePath[150];
+	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
+	printer(" ==  %s \n", ImageFilePath);
+	FILE *fIn = fopen(ImageFilePath, "r"); // Input File name
+
+	unsigned char header[54];
+	unsigned char colorTable[1024];
+	int i;
+
+	if (fIn == NULL) // check if the input file has not been opened succesfully.
+	{
+		printf("File does not exist.\n");
+	}
+
+	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
+	{
+		{
+			header[i] = getc(fIn);
+		}
+	}
+
+	int height = *(int *)&header[18];
+	int width = *(int *)&header[22];
+	int bitDepth = *(int *)&header[28];
+
+	if (bitDepth <= 8) // if ColorTable present, extract it.
+	{
+		fread(colorTable, sizeof(unsigned char), 1024, fIn);
+	}
+
+	int size = height * width;	// calculate image size
+	unsigned char buffer[size]; // to store the image data
+
+	for (i = 0; i < size; i++)
+	{
+		buffer[i] = getc(fIn);
+	}
+
 	sprintf(ImageFilePath, "out/%s/image_dark.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
-
-	int i;
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 
 	// extract image height, width and bitDepth from imageHeader
-	int bitDepth = *(int *)&header[28];
 
 	if (bitDepth <= 8) // if ColorTable present, extract it.
 	{

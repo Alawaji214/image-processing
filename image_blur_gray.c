@@ -2,15 +2,50 @@
 #include <stdio.h>
 #include <string.h>
 
-int image_bluring_gray(char imageFileName[100], unsigned char header[54], int size, int height, int width, unsigned char buffer[size], int bitDepth, unsigned char colorTable[1024])
+int image_bluring_gray(char imageFileName[100])
 {
 	char ImageFilePath[150];
+	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
+	printer(" ==  %s \n", ImageFilePath);
+	FILE *fIn = fopen(ImageFilePath, "r"); // Input File name
+
+	unsigned char header[54];
+	unsigned char colorTable[1024];
+	int i;
+
+	if (fIn == NULL) // check if the input file has not been opened succesfully.
+	{
+		printf("File does not exist.\n");
+	}
+
+	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
+	{
+		{
+			header[i] = getc(fIn);
+		}
+	}
+
+	int height = *(int *)&header[18];
+	int width = *(int *)&header[22];
+	int bitDepth = *(int *)&header[28];
+
+	if (bitDepth <= 8) // if ColorTable present, extract it.
+	{
+		fread(colorTable, sizeof(unsigned char), 1024, fIn);
+	}
+
+	int size = height * width;	// calculate image size
+	unsigned char buffer[size]; // to store the image data
+
+	for (i = 0; i < size; i++)
+	{
+		buffer[i] = getc(fIn);
+	}
+
 	sprintf(ImageFilePath, "out/%s/image_bluring_gray.bmp", imageFileName);
 	FILE *fOut = fopen(ImageFilePath, "w+"); // Output File name
 
-	// FILE *fOut = fopen("out/bluring_gray.bmp", "w+"); // Output File name
-
-	int i, j, y, x;
+	int j, y, x;
 
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 

@@ -101,11 +101,12 @@ int nonColored(char imageFileName[])
 	printer("width: %d\n", width);
 	printer("size: %d\n", size);
 
-	image_bluring_gray(imageFileName, header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
+	image_bluring_gray(imageFileName); // lena512.bmp
 
-	image_dark(imageFileName, header, colorTable, size, buffer);
+	image_dark(imageFileName);
 
-	image_bright(imageFileName, header, colorTable, size, buffer);
+	image_bright(imageFileName);
+
 	fclose(fIn);
 	return 0;
 }
