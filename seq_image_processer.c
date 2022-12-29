@@ -22,94 +22,36 @@
 
 int colored(char imageFileName[])
 {
-	char ImageFilePath[150];
-	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
-
 	printer("******** This code is executing the colored image processing applications ***** \n");
-	printer(" ==  %s \n", ImageFilePath);
-	FILE *fIn = fopen(ImageFilePath, "r");	 // Input File name
-	FILE *fIn3D = fopen(ImageFilePath, "r"); // Input File name
-	unsigned char header[54];
-	unsigned char colorTable[1024];
-	int i, j;
 
-	if (fIn == NULL) // check if the input file has not been opened succesfully.
-	{
-		printf("File does not exist.\n");
-	}
+	image_colortosepia(imageFileName);
 
-	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
-	{
-		{
-			header[i] = getc(fIn);
-			getc(fIn3D);
-		}
-	}
+	simulate_cvd_protanopia(imageFileName);
 
-	int height = *(int *)&header[18];
-	int width = *(int *)&header[22];
-	int bitDepth = *(int *)&header[28];
-	if (bitDepth <= 8) // if ColorTable present, extract it.
-	{
-		fread(colorTable, sizeof(unsigned char), 1024, fIn);
-	}
+	simulate_cvd_deuteranopia(imageFileName);
 
-	int size = height * width;				  // calculate image size
-	unsigned char D3buffer[width][height][3]; // to store the image data
+	simulate_cvd_tritanopia(imageFileName);
 
-	for (int i = 0; i < width; i++)
-	{
-		for (j = 0; j < height; j++)
-		{
-			D3buffer[i][j][2] = getc(fIn3D); // blue
-			D3buffer[i][j][1] = getc(fIn3D); // green
-			D3buffer[i][j][0] = getc(fIn3D); // red
-		}
-	}
-	unsigned char buffer[size][3]; // to store the image data
+	correct_cvd_protanopia(imageFileName);
 
-	for (i = 0; i < size; i++)
-	{
-		{
-			buffer[i][2] = getc(fIn); // blue
-			buffer[i][1] = getc(fIn); // green
-			buffer[i][0] = getc(fIn); // red
-		}
-	}
+	correct_cvd_deuteranopia(imageFileName);
 
-	printer("height: %d\n", height);
-	printer("width: %d\n", width);
-	printer("size: %d\n", size);
+	correct_cvd_tritanopia(imageFileName);
 
-	image_colortosepia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	black_and_white(imageFileName);
 
-	simulate_cvd_protanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_bluring_color(imageFileName);
 
-	simulate_cvd_deuteranopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_rgb_rotate_right(imageFileName);
 
-	simulate_cvd_tritanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_rgb_rotate_left(imageFileName);
 
-	correct_cvd_protanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_rgb_rotate_180(imageFileName);
 
-	correct_cvd_deuteranopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_negative(imageFileName);
 
-	correct_cvd_tritanopia(imageFileName, header, size, buffer, bitDepth, colorTable);
+	image_rgbtogray(imageFileName);
 
-	black_and_white(imageFileName, header, size, buffer, bitDepth, colorTable);
-
-	image_bluring_color(imageFileName, header, size, height, width, buffer, bitDepth, colorTable);
-
-	image_rgb_rotate_right(imageFileName, header, height, width, D3buffer, colorTable);
-
-	image_rgb_rotate_left(imageFileName, header, height, width, D3buffer, colorTable);
-
-	image_rgb_rotate_180(imageFileName, header, height, width, D3buffer, colorTable);
-
-	image_negative(imageFileName, header, height, width, D3buffer, colorTable);
-
-	image_rgbtogray(imageFileName, header, height, width, D3buffer, colorTable);
-
-	fclose(fIn);
 	return 0;
 }
 
@@ -117,8 +59,6 @@ int nonColored(char imageFileName[])
 {
 	printer("******** This code is executing the non-colored image processing applications ****** \n");
 
-	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
-	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
 	printer(" ==  %s \n", ImageFilePath);
