@@ -56,7 +56,6 @@ int correct_cvd_protanopia(char imageFileName[100], unsigned char header[54], in
 		out[index][2] = b;
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (index = 0; index < size; index++)
 	{
 		putc(out[index][2], fOut);
@@ -121,7 +120,6 @@ int correct_cvd_deuteranopia(char imageFileName[100], unsigned char header[54], 
 		out[index][2] = b;
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (index = 0; index < size; index++)
 	{
 		putc(out[index][2], fOut);
@@ -147,7 +145,6 @@ int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], in
 	float rr, gg, bb;
 	float l, m, s;	  // original
 	float ll, mm, ss; // updated
-#pragma omp parallel for schedule(guided, 10) private(r,g,b,rr,gg,bb,l,m,s,ll,mm,ss)
 	for (index = 0; index < size; index++)
 	{
 		r = buffer[index][0];	  // red
@@ -187,7 +184,6 @@ int correct_cvd_tritanopia(char imageFileName[100], unsigned char header[54], in
 	}
 
 	// write image data back to the file
-#pragma omp parallel for num_threads(1)
 	for (index = 0; index < size; index++)
 	{
 		putc(out[index][2], fOut);

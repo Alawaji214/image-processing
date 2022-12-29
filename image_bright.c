@@ -21,7 +21,6 @@ int image_bright(char imageFileName[100], unsigned char *header, unsigned char *
 	}
 	unsigned char image_buffer[size];
 
-	#pragma omp parallel for schedule(guided, 10)
 	for (i = 0; i < size; i++) // increasing pixel values to get image bright
 	{
 		temp = buffer[i] + BRIGHTNESS_FACTOR;

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
 #include <math.h>
 #include <string.h>
 
@@ -21,7 +20,6 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 	unsigned char new_header[54];
 	memcpy(new_header, header, 54);
 
-#pragma omp parallel for private(j, tempH) schedule(guided, 10)
 	for (i = 0; i < width; i++)			   // to rotate right
 	{
 		tempH = height;
@@ -34,7 +32,6 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 		}
 	}
 
-#pragma omp parallel for // num_threads(threads)
 	for (i = 0; i < 4; i++)
 	{
 		heightA[i] = header[18 + i];
@@ -49,7 +46,6 @@ int image_rgb_rotate_right(char imageFileName[100], unsigned char header[54], in
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < height; i++)
 	{
 		for (j = 0; j < width; j++)
@@ -80,7 +76,6 @@ int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int
 	unsigned char new_header[54];
 	memcpy(new_header, header, 54);
 
-#pragma omp parallel for private(j, tempW) schedule(guided, 10)// num_threads(threads)
 	for (i = 0; i < height; i++)		   // to rotate left
 	{
 		tempW = width;
@@ -93,7 +88,6 @@ int image_rgb_rotate_left(char imageFileName[100], unsigned char header[54], int
 		}
 	}
 
-#pragma omp parallel for // num_threads(threads)
 	for (i = 0; i < 4; i++)
 	{
 		heightA[i] = header[18 + i];
@@ -136,7 +130,6 @@ int image_rgb_rotate_180(char imageFileName[100], unsigned char header[54], int 
 	int size = height * width; // calculate image size
 	unsigned char out_buffer[width][height][3];
 
-#pragma omp parallel for private(j) schedule(guided, 10)
 	for (i = width - 1; i >= 0; i--)	   // to rotate left
 	{
 		for (j = height - 1; j >= 0; j--)

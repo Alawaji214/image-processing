@@ -1,5 +1,3 @@
-
-#include <omp.h>
 #include <stdio.h>
 #include <time.h>
 #define BW_THRESHOLD 128
@@ -21,7 +19,6 @@ int black_and_white(char imageFileName[100], unsigned char header[54], int size,
 		fwrite(colorTable, sizeof(unsigned char), 1024, fOut);
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++) // store 0(black) and 255(white) values to buffer
 	{
 		if ((buffer[i][0] > BW_THRESHOLD && buffer[i][1] > BW_THRESHOLD) 

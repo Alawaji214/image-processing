@@ -46,7 +46,6 @@ int image_bluring_color(char imageFileName[100], unsigned char header[54], int s
 		}
 	}
 
-#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++) // write image data back to the file
 	{
 		putc(out[i][2], fOut);
