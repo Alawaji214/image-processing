@@ -20,11 +20,21 @@
 #define printer printf
 #endif
 
-int main(int argc, char *argv[])
+void colored(int rank, int size, MPI_Comm comm)
 {
-    // Initialize the MPI environment
+
     int numImages = 24;
-    int numImages_nc = 24;
+    char ImageFilePath[150];
+    FILE *fIn;
+    FILE *fIn3D;
+    unsigned char header[54];
+    unsigned char colorTable[1024];
+    int height;
+    int width;
+    int bitDepth;
+    int imgsize;
+    unsigned char *buffer, *D3buffer;
+    int function_indices[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
     char coloredImages[24][100] = {
         "airplane",
@@ -53,54 +63,8 @@ int main(int argc, char *argv[])
         "lena_color",
     };
 
-    char nonColoredImages[24][100] = {
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-        "boats",
-    };
 
 
-    char ImageFilePath[150];
-    FILE *fIn;
-    FILE *fIn3D;
-    unsigned char header[54];
-    unsigned char colorTable[1024];
-    int height;
-    int width;
-    int bitDepth;
-    int imgsize;
-    unsigned char *buffer, *D3buffer;
-    int function_indices[13] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-    int function_indices_nc[3] = {0, 1, 2};
-    int function_index;
-    int result;
-
-    MPI_Init(&argc, &argv);
-    MPI_Comm comm = MPI_COMM_WORLD;
-    int rank, size;
-    MPI_Comm_rank(comm, &rank);
-    MPI_Comm_size(comm, &size);
 
     for (int imgIndex = 0; imgIndex < numImages; imgIndex++)
     {
@@ -153,14 +117,13 @@ int main(int argc, char *argv[])
         MPI_Bcast(&bitDepth, 1, MPI_INT, 0, comm);
         MPI_Bcast(&imgsize, 1, MPI_INT, 0, comm);
 
-        if(rank !=0)
+        if (rank != 0)
         {
             D3buffer = malloc(width * height * 3);
             buffer = malloc(imgsize * 3);
         }
         MPI_Bcast(buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(D3buffer, imgsize * 3, MPI_UNSIGNED_CHAR, 0, comm);
-
 
         MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
@@ -169,22 +132,21 @@ int main(int argc, char *argv[])
         int indices_per_process = 14 / size;
         int remaining_indices = 14 % size;
 
-        int function_indices_for_process[indices_per_process+1];
+        int function_indices_for_process[indices_per_process + 1];
 
         for (int i = 0; i < indices_per_process; i++)
         {
             function_indices_for_process[i] = -1;
         }
 
-        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT,function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
 
         for (int i = 0; i < indices_per_process + 1; i++)
         {
-            if(function_indices_for_process[i] < 0 || function_indices_for_process[i] > 13)
-            {
-                break;
-            }
-            printf("rank = %d \t - \t function = %d \n", rank, function_indices_for_process[i]);
+            // if(function_indices_for_process[i] < 0 || function_indices_for_process[i] > 13)
+            // {
+            //     break;
+            // }
             switch (function_indices_for_process[i])
             {
             case 0:
@@ -234,16 +196,58 @@ int main(int argc, char *argv[])
             }
         }
     }
+}
 
-    MPI_Barrier(MPI_COMM_WORLD);
+void nonColored(int rank, int size, MPI_Comm comm)
+{
+
+    char nonColoredImages[24][100] = {
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+        "boats",
+    };
+
+    int function_indices_nc[3] = {0, 1, 2};
+    int function_index;
+    int numImages_nc = 24;
+    char ImageFilePath[150];
+    FILE *fIn;
+    unsigned char header[54];
+    unsigned char colorTable[1024];
+    int height;
+    int width;
+    int bitDepth;
+    int imgsize;
+    unsigned char *buffer;
 
     for (int imgIndex = 0; imgIndex < numImages_nc; imgIndex++)
     {
         if (rank == 0)
         {
             sprintf(ImageFilePath, "images/%s.bmp", nonColoredImages[imgIndex]);
-            fIn = fopen(ImageFilePath, "r");   // Input File name
-            for (int i = 0; i < 54; i++)       // read the 54 byte header from fIn
+            fIn = fopen(ImageFilePath, "r"); // Input File name
+            for (int i = 0; i < 54; i++)     // read the 54 byte header from fIn
             {
                 {
                     header[i] = getc(fIn);
@@ -258,14 +262,12 @@ int main(int argc, char *argv[])
             }
 
             imgsize = height * width; // calculate image size
-            // D3buffer[width][height][3];
-            buffer = malloc(imgsize); // to store the image data
+            buffer = malloc(imgsize);
+            // to store the image data
 
             for (int i = 0; i < imgsize; i++)
             {
-                {
-                    buffer[i] = getc(fIn);
-                }
+                buffer[i * sizeof(unsigned char)] = getc(fIn);
             }
         }
 
@@ -278,47 +280,56 @@ int main(int argc, char *argv[])
         {
             buffer = malloc(imgsize);
         }
-        MPI_Bcast(buffer, imgsize, MPI_UNSIGNED_CHAR, 0, comm);
 
+        MPI_Bcast(buffer, imgsize, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(&header, 54, MPI_UNSIGNED_CHAR, 0, comm);
         MPI_Bcast(&colorTable, 1024, MPI_UNSIGNED_CHAR, 0, comm);
-        // }
 
         int indices_per_process = 3 / size;
         int remaining_indices = 3 % size;
-
         int function_indices_for_process[indices_per_process + 1];
-
         for (int i = 0; i < indices_per_process; i++)
         {
             function_indices_for_process[i] = -1;
         }
 
-        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Scatter(function_indices_nc, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
 
         for (int i = 0; i < indices_per_process + 1; i++)
         {
-            if (function_indices_for_process[i] < 0 || function_indices_for_process[i] > 2)
-            {
-                break;
-            }
-            printf("nc :: rank = %d \t - \t function = %d \n", rank, function_indices_for_process[i]);
             switch (function_indices_for_process[i])
             {
             case 0:
-                image_bluring_gray(nonColoredImages[imgIndex], header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
+                image_bluring_gray(nonColoredImages[imgIndex], header, imgsize, height, width, buffer, bitDepth, colorTable);
                 break;
             case 1:
-                // image_dark(nonColoredImages[imgIndex], header, colorTable, size, buffer);
+                image_dark(nonColoredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
                 break;
             case 2:
-                // image_bright(nonColoredImages[imgIndex], header, colorTable, size, buffer);
+                image_bright(nonColoredImages[imgIndex], header, imgsize, buffer, bitDepth, colorTable);
                 break;
             default:
                 break;
             }
         }
     }
+}
+
+int main(int argc, char *argv[])
+{
+    // Initialize the MPI environment
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm comm = MPI_COMM_WORLD;
+    int rank, size;
+    MPI_Comm_rank(comm, &rank);
+    MPI_Comm_size(comm, &size);
+
+    colored(rank, size, comm);
+    
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    nonColored(rank, size, comm);
 
     MPI_Finalize();
     return 0;

@@ -1,7 +1,8 @@
 #include <stdio.h>
 #define THRESHOLD 40
 
-int image_dark(char imageFileName[100], unsigned char *header, unsigned char *colorTable, int size, unsigned char *buffer)
+// int image_dark(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
+int image_dark(char imageFileName[100], unsigned char header[54], int size, unsigned char *buffer, int bitDepth, unsigned char colorTable[1024])
 {
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "out/%s/image_dark.bmp", imageFileName);
@@ -14,7 +15,7 @@ int image_dark(char imageFileName[100], unsigned char *header, unsigned char *co
 	fwrite(header, sizeof(unsigned char), 54, fOut); // write the header back
 
 	// extract image height, width and bitDepth from imageHeader
-	int bitDepth = *(int *)&header[28];
+	// int bitDepth = *(int *)&header[28];
 
 	if (bitDepth <= 8) // if ColorTable present, extract it.
 	{
