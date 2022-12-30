@@ -13,3 +13,5 @@ then
     icx -qopenmp image_processer.c -o icx_image_processer_release -DRELEASE 
     icx -qopenmp image_processer.c -o icx_image_processer
 fi
+
+# vtune -collect hotspots ./icx_image_processer
