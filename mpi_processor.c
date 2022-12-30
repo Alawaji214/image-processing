@@ -63,9 +63,6 @@ void colored(int rank, int size, MPI_Comm comm)
         "lena_color",
     };
 
-
-
-
     for (int imgIndex = 0; imgIndex < numImages; imgIndex++)
     {
         if (rank == 0)
@@ -137,14 +134,14 @@ void colored(int rank, int size, MPI_Comm comm)
         {
             function_indices_for_process[i] = -1;
         }
+        if (rank == 0)
+            if (size < 15)
+            {
+                int function_indices[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 
-        if(size < 15){
-            int function_indices[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-
-
-            MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
-        }
-        else{
+                MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+            }
+            else{
             int function_indices[size];
             for(int i = 0; i < size; i++){
                 if(i < 14)
@@ -308,6 +305,7 @@ void nonColored(int rank, int size, MPI_Comm comm)
             function_indices_for_process[i] = -1;
         }
 
+        if(rank==0)
         if (size < 3)
         {
             int function_indices[3] = {0, 1, 2};
