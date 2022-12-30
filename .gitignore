@@ -5,6 +5,8 @@ out/BoatsColor/*.bmp
 out/goldhill/*.bmp
 out/lena_color/*.bmp
 out/*.bmp
+out/nature/*.bmp
+out/pepper/*.bmp
 
 icx_image_processer
 icx_image_processer_release
