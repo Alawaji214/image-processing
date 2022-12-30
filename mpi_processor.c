@@ -34,7 +34,7 @@ void colored(int rank, int size, MPI_Comm comm)
     int bitDepth;
     int imgsize;
     unsigned char *buffer, *D3buffer;
-    int function_indices[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    
 
     char coloredImages[24][100] = {
         "airplane",
@@ -131,7 +131,6 @@ void colored(int rank, int size, MPI_Comm comm)
 
         int indices_per_process = 14 / size;
         int remaining_indices = 14 % size;
-
         int function_indices_for_process[indices_per_process + 1];
 
         for (int i = 0; i < indices_per_process; i++)
@@ -139,14 +138,30 @@ void colored(int rank, int size, MPI_Comm comm)
             function_indices_for_process[i] = -1;
         }
 
-        MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        if(size < 15){
+            int function_indices[14] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+
+
+            MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        }
+        else{
+            int function_indices[size];
+            for(int i = 0; i < size; i++){
+                if(i < 14)
+                    function_indices[i] = i;
+                else
+                    function_indices[i] = -1;
+            }
+
+            MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        }
 
         for (int i = 0; i < indices_per_process + 1; i++)
         {
-            // if(function_indices_for_process[i] < 0 || function_indices_for_process[i] > 13)
-            // {
-            //     break;
-            // }
+            if(function_indices_for_process[i] < 0 || function_indices_for_process[i] > 13)
+            {
+                break;
+            }
             switch (function_indices_for_process[i])
             {
             case 0:
@@ -228,7 +243,6 @@ void nonColored(int rank, int size, MPI_Comm comm)
         "boats",
     };
 
-    int function_indices_nc[3] = {0, 1, 2};
     int function_index;
     int numImages_nc = 24;
     char ImageFilePath[150];
@@ -288,15 +302,42 @@ void nonColored(int rank, int size, MPI_Comm comm)
         int indices_per_process = 3 / size;
         int remaining_indices = 3 % size;
         int function_indices_for_process[indices_per_process + 1];
+
         for (int i = 0; i < indices_per_process; i++)
         {
             function_indices_for_process[i] = -1;
         }
 
-        MPI_Scatter(function_indices_nc, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        if (size < 3)
+        {
+            int function_indices[3] = {0, 1, 2};
+
+            MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        }
+        else
+        {
+            int function_indices[size];
+            for (int i = 0; i < size; i++)
+            {
+                if (i < 3)
+                    function_indices[i] = i;
+                else
+                    function_indices[i] = -1;
+            }
+
+            MPI_Scatter(function_indices, indices_per_process + (rank < remaining_indices), MPI_INT, function_indices_for_process, indices_per_process + (rank < remaining_indices), MPI_INT, 0, MPI_COMM_WORLD);
+        }
+
+
+
 
         for (int i = 0; i < indices_per_process + 1; i++)
         {
+            if (function_indices_for_process[i] < 0 || function_indices_for_process[i] > 2)
+            {
+                break;
+            }
+
             switch (function_indices_for_process[i])
             {
             case 0:
@@ -322,8 +363,14 @@ int main(int argc, char *argv[])
     MPI_Init(&argc, &argv);
     MPI_Comm comm = MPI_COMM_WORLD;
     int rank, size;
+    clock_t start, end;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
+
+    if(rank == 0){
+        start = clock();
+    }
+
 
     colored(rank, size, comm);
     
@@ -331,6 +378,13 @@ int main(int argc, char *argv[])
 
     nonColored(rank, size, comm);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    if(rank == 0){
+        end = clock();
+        double time_taken = ((double)end - (double)start) / CLOCKS_PER_SEC;
+        printf("number of Nodes = %d \t Time taken: %f\n",size, time_taken);
+    }
     MPI_Finalize();
     return 0;
 }
