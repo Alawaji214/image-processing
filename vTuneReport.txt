@@ -1,0 +1,101 @@
+vtune: Collection started. To stop the collection, either press CTRL-C or enter from another console window: vtune -r /home/u176119/image-processing/r003hs -command stop.
+number of Nodes = 12     Time taken: 2.555291
+vtune: Collection stopped.
+vtune: Using result path `/home/u176119/image-processing/r003hs'
+vtune: Executing actions 19 % Resolving information for `libfabric.so.1'       
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libdl.so.2'.
+vtune: Warning: Cannot locate debugging information for file `/usr/bin/grep'.
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libpsm2.so.2'.
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/libfabric.so.1'.
+vtune: Executing actions 19 % Resolving information for `hydra_bstrap_proxy'   
+vtune: Warning: Cannot locate debugging information for file `/usr/bin/dash'.
+vtune: Executing actions 19 % Resolving information for `[vdso]'               
+vtune: Warning: Cannot locate debugging information for file `/usr/lib/x86_64-linux-gnu/libibverbs/libhfi1verbs-rdmav25.so'.
+vtune: Executing actions 19 % Resolving information for `uname'                
+vtune: Warning: Cannot locate debugging information for file `/usr/bin/uname'.
+vtune: Executing actions 20 % Resolving information for `libnl-3.so.200'       
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/prov/librxm-fi.so'.
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libnl-3.so.200'.
+vtune: Executing actions 20 % Resolving information for `ld-linux-x86-64.so.2' 
+vtune: Warning: Cannot locate debugging information for file `/lib64/ld-linux-x86-64.so.2'.
+vtune: Executing actions 20 % Resolving information for `libc.so.6'            
+vtune: Warning: Cannot locate debugging information for file `/usr/bin/whoami'.
+vtune: Executing actions 20 % Resolving information for `libefa-fi.so'         
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libc.so.6'.
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/prov/libefa-fi.so'.
+vtune: Executing actions 20 % Resolving information for `libtpsstool.so'       
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libibverbs.so.1'.
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/vtune/2023.0.0/lib64/libtpsstool.so'.
+vtune: Executing actions 21 % Resolving information for `mpi_process'          
+vtune: Warning: Cannot locate debugging information for file `/home/u176119/image-processing/mpi_process'.
+vtune: Executing actions 21 % Resolving information for `libm.so.6'            
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libm.so.6'.
+vtune: Executing actions 21 % Resolving information for `libpthread.so.0'      
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/prov/libpsm3-fi.so'.
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libpthread.so.0'.
+vtune: Executing actions 21 % Resolving information for `libtcp-fi.so'         
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/prov/libtcp-fi.so'.
+vtune: Executing actions 21 % Resolving information for `libverbs-1.1-fi.so'   
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/mpi/2021.8.0/libfabric/lib/prov/libverbs-1.1-fi.so'.
+vtune: Executing actions 75 % Generating a report                              Elapsed Time: 9.134s
+    CPU Time: 59.129s
+        Effective Time: 58.321s
+        Spin Time: 0.808s
+            MPI Busy Wait Time: 0.808s
+            Other: 0s
+        Overhead Time: 0s
+            Other: 0s
+    Total Thread Count: 39
+    Paused Time: 0s
+
+Top Hotspots
+Function           Module        CPU Time  % of CPU Time(%)
+-----------------  ------------  --------  ----------------
+tcpx_conn_mgr_run  libtcp-fi.so   24.586s             41.6%
+getdelim           libc.so.6      15.802s             26.7%
+epoll_wait         libc.so.6       9.495s             16.1%
+PMPI_Bcast         libmpi.so.12    1.140s              1.9%
+dlopen             libdl.so.2      0.994s              1.7%
+[Others]           N/A             7.113s             12.0%
+Effective Physical Core Utilization: 57.5% (6.903 out of 12)
+ | The metric value is low, which may signal a poor physical CPU cores
+ | utilization caused by:
+ |     - load imbalance
+ |     - threading runtime overhead
+ |     - contended synchronization
+ |     - thread/process underutilization
+ |     - incorrect affinity that utilizes logical cores instead of physical
+ |       cores
+ | Explore sub-metrics to estimate the efficiency of MPI and OpenMP parallelism
+ | or run the Locks and Waits analysis to identify parallel bottlenecks for
+ | other parallel runtimes.
+ |
+    Effective Logical Core Utilization: 29.1% (6.993 out of 24)
+     | The metric value is low, which may signal a poor logical CPU cores
+     | utilization. Consider improving physical core utilization as the first
+     | step and then look at opportunities to utilize logical cores, which in
+     | some cases can improve processor throughput and overall performance of
+     | multi-threaded applications.
+     |
+Collection and Platform Info
+    Application Command Line: mpirun "-np" "12" "./mpi_process" 
+    Operating System: 5.4.0-80-generic DISTRIB_ID=Ubuntu DISTRIB_RELEASE=20.04 DISTRIB_CODENAME=focal DISTRIB_DESCRIPTION="Ubuntu 20.04.5 LTS"
+    Computer Name: s001-n059
+    Result Size: 8.9 MB 
+    Collection start time: 21:48:50 30/12/2022 UTC
+    Collection stop time: 21:48:59 30/12/2022 UTC
+    Collector Type: Driverless Perf per-process counting,User-mode sampling and tracing
+    CPU
+        Name: Intel(R) Xeon(R) Processor code named Skylake
+        Frequency: 3.392 GHz
+        Logical CPU Count: 24
+        LLC size: 20.2 MB 
+        Cache Allocation Technology
+            Level 2 capability: not detected
+            Level 3 capability: available
+
+If you want to skip descriptions of detected performance issues in the report,
+enter: vtune -report summary -report-knob show-issues=false -r <my_result_dir>.
+Alternatively, you may view the report in the csv format: vtune -report
+<report_name> -format=csv.
+vtune: Executing actions 100 % done      

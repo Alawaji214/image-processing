@@ -1,17 +1,11 @@
 #!/bin/bash
 
 # GCC 
-if command -v gcc &> /dev/null
+if command -v mpicc &> /dev/null
 then
-    gcc -fopenmp image_processer.c -o gcc_image_processer_release -lm -DRELEASE
-    gcc -fopenmp image_processer.c -o gcc_image_processer -lm
+    mpicc -mpi_processor.c -o mpi_processer_release -lm -DRELEASE
+    mpicc -mpi_processor.c -o mpi_processer -lm
 fi
 
-# ICX
-if command -v icx &> /dev/null
-then
-    icx -qopenmp image_processer.c -o icx_image_processer_release -DRELEASE 
-    icx -qopenmp image_processer.c -o icx_image_processer
-fi
 
 # vtune -collect hotspots ./icx_image_processer
