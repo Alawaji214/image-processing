@@ -60,7 +60,7 @@ int colored(char imageFileName[])
 	int size = height * width;				  // calculate image size
 	unsigned char D3buffer[width][height][3]; // to store the image data
 
-#pragma omp parallel for private(j) num_threads(1) //ordered
+#pragma omp parallel for private(j) num_threads(1) // ordered
 	for (int i = 0; i < width; i++)
 	{
 		for (j = 0; j < height; j++)
@@ -72,7 +72,7 @@ int colored(char imageFileName[])
 	}
 	unsigned char buffer[size][3]; // to store the image data
 
-#pragma omp parallel for num_threads(1) //ordered 
+#pragma omp parallel for num_threads(1) // ordered
 	for (i = 0; i < size; i++)
 	{
 		{
@@ -141,8 +141,6 @@ int nonColored(char imageFileName[])
 
 	printer("******** This code is executing the non-colored image processing applications ****** \n");
 
-	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
-	// FILE *fIn = fopen(imageFileName, "r"); // Input File name
 	char ImageFilePath[150];
 	sprintf(ImageFilePath, "images/%s.bmp", imageFileName);
 	printer(" ==  %s \n", ImageFilePath);
@@ -157,8 +155,8 @@ int nonColored(char imageFileName[])
 		printf("File does not exist.\n");
 	}
 
-#pragma omp parallel for num_threads(1) //ordered 
-	for (i = 0; i < 54; i++) // read the 54 byte header from fIn
+#pragma omp parallel for num_threads(1) // ordered
+	for (i = 0; i < 54; i++)			// read the 54 byte header from fIn
 	{
 		{
 			header[i] = getc(fIn);
@@ -177,7 +175,7 @@ int nonColored(char imageFileName[])
 	int size = height * width;	// calculate image size
 	unsigned char buffer[size]; // to store the image data
 
-#pragma omp parallel for num_threads(1) 
+#pragma omp parallel for num_threads(1)
 	for (i = 0; i < size; i++)
 	{
 		buffer[i] = getc(fIn);
@@ -190,7 +188,7 @@ int nonColored(char imageFileName[])
 #pragma omp parallel sections
 	{
 #pragma omp section
-		image_bluring_gray(imageFileName, header, size, height, width, buffer, bitDepth, colorTable); // lena512.bmp
+		image_bluring_gray(imageFileName, header, size, height, width, buffer, bitDepth, colorTable);
 
 #pragma omp section
 		image_dark(imageFileName, header, colorTable, size, buffer);
@@ -236,7 +234,7 @@ int coloredImagesDriver()
 #pragma omp parallel for
 	for (int i = 0; i < 24; i++)
 	{
-		// Process image
+		// Process the indexed image
 		colored(coloredImages[i]);
 	}
 
@@ -275,6 +273,7 @@ int nonColoredImagesDriver()
 #pragma omp parallel for
 	for (int i = 0; i < 24; i++)
 	{
+		// Process the indexed image
 		nonColored(nonColoredImages[i]);
 	}
 
@@ -297,9 +296,8 @@ int main(int argc, char *argv[])
 #pragma omp task
 		{
 			NCStart = omp_get_wtime();
-			// nonColored("images/boats.bmp");
 			nonColoredImagesDriver();
-				NCStop = omp_get_wtime();
+			NCStop = omp_get_wtime();
 		}
 	}
 
