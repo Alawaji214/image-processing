@@ -1,0 +1,70 @@
+vtune: Collection started. To stop the collection, either press CTRL-C or enter from another console window: vtune -r /home/u176119/image-processing/r002hs -command stop.
+colored excution Time: 14.563842 ms
+non-colored excution Time: 0.806647 ms
+overall excution Time: 15.370489 ms
+vtune: Collection stopped.
+vtune: Using result path `/home/u176119/image-processing/r002hs'
+vtune: Executing actions 19 % Resolving information for `gcc_seq_image_processe
+vtune: Warning: Cannot locate debugging information for file `/home/u176119/image-processing/gcc_seq_image_processer_release'.
+vtune: Executing actions 19 % Resolving information for `libm.so.6'            
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libc.so.6'.
+vtune: Warning: Cannot locate debugging information for file `/lib/x86_64-linux-gnu/libm.so.6'.
+vtune: Executing actions 21 % Resolving information for `libtpsstool.so'       
+vtune: Warning: Cannot locate debugging information for file `/glob/development-tools/versions/oneapi/2023.0/oneapi/vtune/2023.0.0/lib64/libtpsstool.so'.
+vtune: Executing actions 75 % Generating a report                              Elapsed Time: 19.785s
+    CPU Time: 15.350s
+        Effective Time: 15.350s
+        Spin Time: 0s
+        Overhead Time: 0s
+    Total Thread Count: 1
+    Paused Time: 0s
+Top Hotspots
+Function                Module                           CPU Time  % of CPU Time(%)
+----------------------  -------------------------------  --------  ----------------
+powf64                  libm.so.6                          3.132s             20.4%
+getc                    libc.so.6                          2.062s             13.4%
+image_bluring_color     gcc_seq_image_processer_release    1.021s              6.7%
+rgb2lms                 gcc_seq_image_processer_release    0.804s              5.2%
+correct_cvd_protanopia  gcc_seq_image_processer_release    0.700s              4.6%
+[Others]                N/A                                7.631s             49.7%
+Effective Physical Core Utilization: 6.4% (0.771 out of 12)
+ | The metric value is low, which may signal a poor physical CPU cores
+ | utilization caused by:
+ |     - load imbalance
+ |     - threading runtime overhead
+ |     - contended synchronization
+ |     - thread/process underutilization
+ |     - incorrect affinity that utilizes logical cores instead of physical
+ |       cores
+ | Explore sub-metrics to estimate the efficiency of MPI and OpenMP parallelismCollection and Platform Info
+    Application Command Line: ./gcc_seq_image_processer_release 
+    Operating System: 5.4.0-80-generic DISTRIB_ID=Ubuntu DISTRIB_RELEASE=20.04 DISTRIB_CODENAME=focal DISTRIB_DESCRIPTION="Ubuntu 20.04.5 LTS"
+    Computer Name: s001-n058
+    Result Size: 4.4 MB 
+    Collection start time: 11:44:23 30/12/2022 UTC
+    Collection stop time: 11:44:42 30/12/2022 UTC
+    Collector Type: Driverless Perf per-process counting,User-mode sampling and tracing
+    CPU
+        Name: Intel(R) Xeon(R) Processor code named Skylake
+        Frequency: 3.392 GHz
+        Logical CPU Count: 24
+        LLC size: 20.2 MB 
+        Cache Allocation Technology
+            Level 2 capability: not detected
+            Level 3 capability: available
+
+If you want to skip descriptions of detected performance issues in the report,
+enter: vtune -report summary -report-knob show-issues=false -r <my_result_dir>.
+Alternatively, you may view the report in the csv format: vtune -report
+<report_name> -format=csv.
+vtune: Executing actions 100 % done  
+ | or run the Locks and Waits analysis to identify parallel bottlenecks for
+ | other parallel runtimes.
+ |
+    Effective Logical Core Utilization: 3.2% (0.773 out of 24)
+     | The metric value is low, which may signal a poor logical CPU cores
+     | utilization. Consider improving physical core utilization as the first
+     | step and then look at opportunities to utilize logical cores, which in
+     | some cases can improve processor throughput and overall performance of
+     | multi-threaded applications.
+     |
